@@ -1,6 +1,7 @@
 namespace MegaRaketa.Gameplay.Rocket
 {
-    public class RocketState : IRocketState
+    public interface IRocket
     {
+        void Launch();
     }
 }
