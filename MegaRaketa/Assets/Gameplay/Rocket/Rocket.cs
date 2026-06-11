@@ -1,3 +1,4 @@
+using System;
 using MegaRaketa.Gameplay.Asteroids;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -17,6 +18,8 @@ namespace MegaRaketa.Gameplay.Rocket
         private bool _isLaunched;
         private Collider2D _rocketCollider;
         private Quaternion _startRotation;
+
+        public event Action OnAsteroidCollide;
 
         public Vector3 Position => transform.position;
         public float DeviationAngle => _deviationAngle;
@@ -96,6 +99,7 @@ namespace MegaRaketa.Gameplay.Rocket
             }
 
             Destroy(asteroid.gameObject);
+            OnAsteroidCollide?.Invoke();
         }
     }
 }
