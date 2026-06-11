@@ -17,5 +17,4 @@ MonoBehaviour:
   _asteroidsSpeedRange: {x: 0, y: 2}
   _asteroidsRotationSpeedRange: {x: -360, y: 360}
   _asteroidsSizeRange: {x: 0.8, y: 1.3}
-  _spawnDistanceFromRocket: 10
-  _spawnWidth: 20
+  _spawnRadius: 10

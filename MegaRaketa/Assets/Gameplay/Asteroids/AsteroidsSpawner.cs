@@ -60,10 +60,17 @@ namespace MegaRaketa.Gameplay.Asteroids
 
         private void SpawnAsteroid()
         {
-            Vector3 position = new Vector3(
-                _rocket.Position.x + Random.Range(-_config.SpawnWidth * 0.5f, _config.SpawnWidth * 0.5f),
-                _rocket.Position.y + _config.SpawnDistanceFromRocket,
-                _rocket.Position.z);
+            Vector2 spawnDirection = Random.insideUnitCircle.normalized;
+
+            if (spawnDirection == Vector2.zero)
+            {
+                spawnDirection = Vector2.up;
+            }
+
+            Vector3 position = _rocket.Position + new Vector3(
+                spawnDirection.x,
+                spawnDirection.y,
+                0f) * _config.SpawnRadius;
 
             Asteroid asteroid = Instantiate(_asteroidPrefab, position, Quaternion.identity, _asteroidsParent);
             asteroid.Initialize(

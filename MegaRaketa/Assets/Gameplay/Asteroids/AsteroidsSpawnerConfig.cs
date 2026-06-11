@@ -10,15 +10,13 @@ namespace MegaRaketa.Gameplay.Asteroids
         [SerializeField] private Vector2 _asteroidsSpeedRange;
         [SerializeField] private Vector2 _asteroidsRotationSpeedRange;
         [SerializeField] private Vector2 _asteroidsSizeRange;
-        [SerializeField, Min(0f)] private float _spawnDistanceFromRocket;
-        [SerializeField, Min(0f)] private float _spawnWidth;
+        [SerializeField, Min(0f)] private float _spawnRadius;
 
         public Vector2 SectionLengthRange => _sectionLengthRange;
         public Vector2 AsteroidsFrequencyRange => _asteroidsFrequencyRange;
         public Vector2 AsteroidsSpeedRange => _asteroidsSpeedRange;
         public Vector2 AsteroidsRotationSpeedRange => _asteroidsRotationSpeedRange;
         public Vector2 AsteroidsSizeRange => _asteroidsSizeRange;
-        public float SpawnDistanceFromRocket => _spawnDistanceFromRocket;
-        public float SpawnWidth => _spawnWidth;
+        public float SpawnRadius => _spawnRadius;
     }
 }
