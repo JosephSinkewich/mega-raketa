@@ -7,7 +7,7 @@ namespace MegaRaketa.SceneContext
     {
         public override void InstallBindings()
         {
-            Container.Bind<RocketState>().AsSingle();
+            Container.Bind<IRocketState>().To<RocketState>().AsSingle();
         }
     }
 }
