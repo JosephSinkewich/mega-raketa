@@ -1,4 +1,5 @@
-using System.Collections;
+using Cysharp.Threading.Tasks;
+using MegaRaketa.Gameplay.CameraOperator;
 using MegaRaketa.Gameplay.Rocket;
 using MegaRaketa.Gameplay.Rocket.RocketControl;
 using MegaRaketa.Tweens;
@@ -13,9 +14,11 @@ namespace MegaRaketa.Gameplay.StartScenario
         [SerializeField] private GameObject _tapObject;
         [SerializeField, Min(0f)] private float _tapObjectDestroyPeriod = 0.25f;
         [SerializeField, Min(0f)] private float _rocketControlUnlockDelay;
+        [SerializeField, Min(0f)] private float _cameraOperatorUnlockDelay;
 
         [Inject] private IRocket _rocket;
         [Inject] private IRocketControl _rocketControl;
+        [Inject] private ICameraOperator _cameraOperator;
 
         private bool _isLaunched;
 
@@ -29,7 +32,8 @@ namespace MegaRaketa.Gameplay.StartScenario
             _isLaunched = true;
             _rocket.Launch();
             DestroyTapObject();
-            StartCoroutine(UnlockRocketControlWithDelay());
+            UnlockRocketControlWithDelayAsync().Forget();
+            UnlockCameraOperatorWithDelayAsync().Forget();
         }
 
         private bool IsTapStarted()
@@ -62,19 +66,34 @@ namespace MegaRaketa.Gameplay.StartScenario
                 .OnComplete(_tapObject, Destroy);
         }
 
-        private IEnumerator UnlockRocketControlWithDelay()
+        private async UniTask UnlockRocketControlWithDelayAsync()
         {
             if (_rocketControl == null)
             {
-                yield break;
+                return;
             }
 
             if (_rocketControlUnlockDelay > 0f)
             {
-                yield return new WaitForSeconds(_rocketControlUnlockDelay);
+                await UniTask.WaitForSeconds(_rocketControlUnlockDelay, cancellationToken: destroyCancellationToken);
             }
 
             _rocketControl.Unlock();
+        }
+
+        private async UniTask UnlockCameraOperatorWithDelayAsync()
+        {
+            if (_cameraOperator == null)
+            {
+                return;
+            }
+
+            if (_cameraOperatorUnlockDelay > 0f)
+            {
+                await UniTask.WaitForSeconds(_cameraOperatorUnlockDelay, cancellationToken: destroyCancellationToken);
+            }
+
+            _cameraOperator.Unlock();
         }
     }
 }

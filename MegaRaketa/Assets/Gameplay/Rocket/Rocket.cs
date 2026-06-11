@@ -15,6 +15,9 @@ namespace MegaRaketa.Gameplay.Rocket
         private bool _isLaunched;
         private Quaternion _startRotation;
 
+        public Vector3 Position => transform.position;
+        public float DeviationAngle => _deviationAngle;
+
         private void Awake()
         {
             _startRotation = transform.rotation;
