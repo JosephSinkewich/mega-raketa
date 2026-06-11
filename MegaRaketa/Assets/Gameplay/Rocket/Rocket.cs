@@ -7,9 +7,18 @@ namespace MegaRaketa.Gameplay.Rocket
     {
         [SerializeField, Min(0f)] private float _acceleration;
         [SerializeField, Min(0f)] private float _maxSpeed;
+        [SerializeField, Min(0f)] private float _rotationSpeed;
+        [SerializeField, Min(0f)] private float _maxDeviationAngle;
 
         private float _speed;
+        private float _deviationAngle;
         private bool _isLaunched;
+        private Quaternion _startRotation;
+
+        private void Awake()
+        {
+            _startRotation = transform.rotation;
+        }
 
         private void Update()
         {
@@ -28,6 +37,24 @@ namespace MegaRaketa.Gameplay.Rocket
             AccelerateAsync().Forget();
         }
 
+        public void RotateTo(Vector3 targetPoint)
+        {
+            Vector3 directionToTarget = targetPoint - transform.position;
+
+            if (directionToTarget == Vector3.zero)
+            {
+                return;
+            }
+
+            Vector3 startDirection = _startRotation * Vector3.up;
+            float targetDeviationAngle = Vector3.SignedAngle(startDirection, directionToTarget, Vector3.forward);
+
+            targetDeviationAngle = Mathf.Clamp(targetDeviationAngle, -_maxDeviationAngle, _maxDeviationAngle);
+            _deviationAngle = Mathf.MoveTowards(_deviationAngle, targetDeviationAngle, _rotationSpeed * Time.deltaTime);
+
+            transform.rotation = Quaternion.AngleAxis(_deviationAngle, Vector3.forward) * _startRotation;
+        }
+
         private async UniTask AccelerateAsync()
         {
             if (_acceleration <= 0f)
@@ -41,5 +68,6 @@ namespace MegaRaketa.Gameplay.Rocket
                 await UniTask.Yield(cancellationToken: destroyCancellationToken);
             }
         }
+
     }
 }

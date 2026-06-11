@@ -1,4 +1,6 @@
+using System.Collections;
 using MegaRaketa.Gameplay.Rocket;
+using MegaRaketa.Gameplay.Rocket.RocketControl;
 using MegaRaketa.Tweens;
 using PrimeTween;
 using UnityEngine;
@@ -10,8 +12,10 @@ namespace MegaRaketa.Gameplay.StartScenario
     {
         [SerializeField] private GameObject _tapObject;
         [SerializeField, Min(0f)] private float _tapObjectDestroyPeriod = 0.25f;
+        [SerializeField, Min(0f)] private float _rocketControlUnlockDelay;
 
         [Inject] private IRocket _rocket;
+        [Inject] private IRocketControl _rocketControl;
 
         private bool _isLaunched;
 
@@ -25,6 +29,7 @@ namespace MegaRaketa.Gameplay.StartScenario
             _isLaunched = true;
             _rocket.Launch();
             DestroyTapObject();
+            StartCoroutine(UnlockRocketControlWithDelay());
         }
 
         private bool IsTapStarted()
@@ -55,6 +60,21 @@ namespace MegaRaketa.Gameplay.StartScenario
 
             Tween.Scale(tapObjectTransform, Vector3.zero, _tapObjectDestroyPeriod)
                 .OnComplete(_tapObject, Destroy);
+        }
+
+        private IEnumerator UnlockRocketControlWithDelay()
+        {
+            if (_rocketControl == null)
+            {
+                yield break;
+            }
+
+            if (_rocketControlUnlockDelay > 0f)
+            {
+                yield return new WaitForSeconds(_rocketControlUnlockDelay);
+            }
+
+            _rocketControl.Unlock();
         }
     }
 }
