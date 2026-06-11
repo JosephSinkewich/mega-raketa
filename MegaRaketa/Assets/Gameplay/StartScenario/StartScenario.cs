@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using MegaRaketa.Gameplay.Asteroids;
 using MegaRaketa.Gameplay.CameraOperator;
 using MegaRaketa.Gameplay.Rocket;
 using MegaRaketa.Gameplay.Rocket.RocketControl;
@@ -15,10 +16,12 @@ namespace MegaRaketa.Gameplay.StartScenario
         [SerializeField, Min(0f)] private float _tapObjectDestroyPeriod = 0.25f;
         [SerializeField, Min(0f)] private float _rocketControlUnlockDelay;
         [SerializeField, Min(0f)] private float _cameraOperatorUnlockDelay;
+        [SerializeField, Min(0f)] private float _asteroidsSpawnerUnlockDelay;
 
         [Inject] private IRocket _rocket;
         [Inject] private IRocketControl _rocketControl;
         [Inject] private ICameraOperator _cameraOperator;
+        [Inject] private IAsteroidsSpawner _asteroidsSpawner;
 
         private bool _isLaunched;
 
@@ -34,6 +37,7 @@ namespace MegaRaketa.Gameplay.StartScenario
             DestroyTapObject();
             UnlockRocketControlWithDelayAsync().Forget();
             UnlockCameraOperatorWithDelayAsync().Forget();
+            UnlockAsteroidsSpawnerWithDelayAsync().Forget();
         }
 
         private bool IsTapStarted()
@@ -94,6 +98,21 @@ namespace MegaRaketa.Gameplay.StartScenario
             }
 
             _cameraOperator.Unlock();
+        }
+
+        private async UniTask UnlockAsteroidsSpawnerWithDelayAsync()
+        {
+            if (_asteroidsSpawner == null)
+            {
+                return;
+            }
+
+            if (_asteroidsSpawnerUnlockDelay > 0f)
+            {
+                await UniTask.WaitForSeconds(_asteroidsSpawnerUnlockDelay, cancellationToken: destroyCancellationToken);
+            }
+
+            _asteroidsSpawner.Unlock();
         }
     }
 }
