@@ -1,8 +1,10 @@
+using MegaRaketa.Gameplay.Asteroids;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace MegaRaketa.Gameplay.Rocket
 {
+    [RequireComponent(typeof(Collider2D))]
     public class Rocket : MonoBehaviour, IRocket
     {
         [SerializeField, Min(0f)] private float _acceleration;
@@ -13,6 +15,7 @@ namespace MegaRaketa.Gameplay.Rocket
         private float _speed;
         private float _deviationAngle;
         private bool _isLaunched;
+        private Collider2D _rocketCollider;
         private Quaternion _startRotation;
 
         public Vector3 Position => transform.position;
@@ -20,6 +23,7 @@ namespace MegaRaketa.Gameplay.Rocket
 
         private void Awake()
         {
+            _rocketCollider = GetComponent<Collider2D>();
             _startRotation = transform.rotation;
         }
 
@@ -27,6 +31,11 @@ namespace MegaRaketa.Gameplay.Rocket
         {
             Vector3 direction = transform.rotation * Vector3.up;
             transform.position += direction * (_speed * Time.deltaTime);
+        }
+
+        private void OnTriggerEnter2D(Collider2D other)
+        {
+            DestroyAsteroid(other);
         }
 
         public void Launch()
@@ -72,5 +81,21 @@ namespace MegaRaketa.Gameplay.Rocket
             }
         }
 
+        private void DestroyAsteroid(Collider2D other)
+        {
+            if (_rocketCollider == null || !_rocketCollider.IsTouching(other))
+            {
+                return;
+            }
+
+            Asteroid asteroid = other.GetComponentInParent<Asteroid>();
+
+            if (asteroid == null)
+            {
+                return;
+            }
+
+            Destroy(asteroid.gameObject);
+        }
     }
 }

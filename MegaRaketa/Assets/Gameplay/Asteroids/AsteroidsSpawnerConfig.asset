@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: AsteroidsSpawnerConfig
   m_EditorClassIdentifier: 
   _sectionLengthRange: {x: 30, y: 60}
-  _asteroidsFrequencyRange: {x: 1, y: 20}
+  _asteroidsFrequencyRange: {x: 5, y: 40}
   _asteroidsSpeedRange: {x: 0, y: 2}
   _asteroidsRotationSpeedRange: {x: -360, y: 360}
   _asteroidsSizeRange: {x: 0.8, y: 1.3}
