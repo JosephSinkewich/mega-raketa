@@ -1,48 +1,59 @@
+using MegaRaketa.Gameplay.VisualObjects;
 using MegaRaketa.Gameplay.VisualObjects.Rocket;
 using UnityEngine;
 using Zenject;
 
 namespace MegaRaketa.Gameplay.VisualObjects.Asteroids
 {
-    public class AsteroidsCleaner : IInitializable, System.IDisposable    {
-        [Inject] private AsteroidsCleanerView _view;
+    public class AsteroidsCleaner : ITickable, IInitializable, System.IDisposable
+    {
+        [Inject] private AsteroidsCleanerConfig _config;
         [Inject] private IRocket _rocket;
+        [Inject] private ISceneVisualObjects _sceneVisualObjects;
 
         private bool _isLocked;
 
         public void Initialize()
         {
             _rocket.OnExplode += HandleRocketExplode;
-            _view.TriggerExited += HandleTriggerExit;
         }
 
         public void Dispose()
         {
             _rocket.OnExplode -= HandleRocketExplode;
-            _view.TriggerExited -= HandleTriggerExit;
         }
 
-        private void HandleRocketExplode()
-        {
-            _isLocked = true;
-        }
-
-        private void HandleTriggerExit(Collider2D other)
+        public void Tick()
         {
             if (_isLocked)
             {
                 return;
             }
 
-            AsteroidView asteroidView = other.GetComponent<AsteroidView>();
+            float cleanupY = _rocket.Position.y - _config.YThresholdFromRocket;
+            Transform container = _sceneVisualObjects.AsteroidsContainer;
 
-            if (asteroidView == null)
+            for (int i = container.childCount - 1; i >= 0; i--)
             {
-                return;
-            }
+                Transform child = container.GetChild(i);
+                AsteroidView asteroidView = child.GetComponent<AsteroidView>();
 
-            asteroidView.Asteroid?.Dispose();
-            Object.Destroy(asteroidView.gameObject);
+                if (asteroidView == null)
+                {
+                    continue;
+                }
+
+                if (child.position.y < cleanupY)
+                {
+                    asteroidView.Asteroid?.Dispose();
+                    Object.Destroy(asteroidView.gameObject);
+                }
+            }
+        }
+
+        private void HandleRocketExplode()
+        {
+            _isLocked = true;
         }
     }
 }

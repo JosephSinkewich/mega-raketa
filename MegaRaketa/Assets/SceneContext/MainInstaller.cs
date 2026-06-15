@@ -15,6 +15,7 @@ namespace MegaRaketa.SceneContext
     public class MainInstaller : MonoInstaller
     {
         [SerializeField] private AsteroidsSpawnerConfig _asteroidsSpawnerConfig;
+        [SerializeField] private AsteroidsCleanerConfig _asteroidsCleanerConfig;
         [SerializeField] private AsteroidConfig _asteroidConfig;
         [SerializeField] private RocketConfig _rocketConfig;
         [SerializeField] private CameraOperatorConfig _cameraOperatorConfig;
@@ -29,6 +30,7 @@ namespace MegaRaketa.SceneContext
         public override void InstallBindings()
         {
             Container.BindInstance(_asteroidsSpawnerConfig).AsSingle();
+            Container.BindInstance(_asteroidsCleanerConfig).AsSingle();
             Container.BindInstance(_asteroidConfig).AsSingle();
             Container.BindInstance(_rocketConfig).AsSingle();
             Container.BindInstance(_cameraOperatorConfig).AsSingle();

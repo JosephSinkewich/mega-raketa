@@ -18,6 +18,7 @@ namespace MegaRaketa.Tools.GameplayConfigs
         [SerializeField] private CameraShakeConfig _cameraShakeConfig;
         [SerializeField] private AsteroidConfig _asteroidConfig;
         [SerializeField] private AsteroidsSpawnerConfig _asteroidsSpawnerConfig;
+        [SerializeField] private AsteroidsCleanerConfig _asteroidsCleanerConfig;
         [SerializeField] private StartScenarioConfig _startScenarioConfig;
         [SerializeField] private GameEndScenarioConfig _gameEndScenarioConfig;
         [SerializeField] private ScoreCounterConfig _scoreCounterConfig;
@@ -29,7 +30,7 @@ namespace MegaRaketa.Tools.GameplayConfigs
             {
                 new ConfigSection("Rocket", _rocketConfig),
                 new ConfigSection("Camera", _cameraOperatorConfig, _cameraShakeConfig),
-                new ConfigSection("Asteroids", _asteroidConfig, _asteroidsSpawnerConfig),
+                new ConfigSection("Asteroids", _asteroidConfig, _asteroidsSpawnerConfig, _asteroidsCleanerConfig),
                 new ConfigSection("Scenarios", _startScenarioConfig, _gameEndScenarioConfig),
                 new ConfigSection("UI", _scoreCounterConfig, _windowsContainerConfig),
             };
