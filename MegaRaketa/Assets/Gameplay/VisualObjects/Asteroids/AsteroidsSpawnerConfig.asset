@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: AsteroidsSpawnerConfig
   m_EditorClassIdentifier: 
   _asteroidPrefab: {fileID: 817706038200001724, guid: 5bf330f633b32cb45a6698ce47ca48cf, type: 3}
-  _spawnRadius: 10
+  _spawnRadius: 20
   _startScenario: {fileID: 11400000, guid: 1e7d5c3b0a984927f6e5d4c3b2a18070, type: 2}
   _loopedScenario: {fileID: 11400000, guid: 2f8e6d4c1b0a4938e7f6d5c4b3a29180, type: 2}
