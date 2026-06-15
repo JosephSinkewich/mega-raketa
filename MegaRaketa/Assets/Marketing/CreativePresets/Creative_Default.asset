@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1a2b3c4d5e6478890a1b2c3d4e5f801, type: 3}
+  m_Name: Creative_Default
+  m_EditorClassIdentifier: 
+  _showLaunchText: 1
+  _showScoreCounter: 1
+  _showSelfDestructButton: 1
+  _overrideLaunchTextStyle: 0
+  _launchTextColor: {r: 1, g: 1, b: 1, a: 1}
+  _launchFontSize: 72
+  _overrideScoreTextStyle: 0
+  _scoreTextColor: {r: 1, g: 1, b: 1, a: 1}
+  _scoreFontSize: 36
+  _overrideGroundColor: 0
+  _groundColor: {r: 0.41509432, g: 0.41509432, b: 0.41509432, a: 1}
+  _overrideCameraBackground: 0
+  _cameraBackgroundColor: {r: 0, g: 0, b: 0, a: 0}
+  _engineFireEnabled: 1
+  _engineFireIntensity: 1
+  _asteroidTrailEnabled: 1
+  _tapPulseEnabled: 1
+  _screenShakeEnabled: 1
+  _gameEndWindowEnabled: 1
+  _applyStartScenarioOverrides: 0
+  _tapObjectDestroyPeriod: 0.25
+  _rocketControlUnlockDelay: 3
+  _cameraOperatorUnlockDelay: 3
+  _asteroidsSpawnerUnlockDelay: 0
+  _selfDestructionButtonUnlockDelay: 3
+  _gameEndWindowDelay: 2
