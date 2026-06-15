@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using DG.Tweening;
-using MegaRaketa.Gameplay.Rocket;
+using MegaRaketa.Gameplay.VisualObjects.Rocket;
 using UnityEngine;
 using Zenject;
 
-namespace MegaRaketa.Gameplay.CameraOperator
+namespace MegaRaketa.Gameplay.Camera
 {
     public class CameraShake : IInitializable, System.IDisposable
     {

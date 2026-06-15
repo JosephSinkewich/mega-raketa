@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-namespace MegaRaketa.Gameplay.CongratulationsWindow
+namespace MegaRaketa.Gameplay.UIElements.CongratulationsWindow
 {
     public class CongratulationsWindow : MonoBehaviour
     {

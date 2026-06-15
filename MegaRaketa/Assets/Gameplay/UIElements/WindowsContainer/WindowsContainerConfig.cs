@@ -1,7 +1,7 @@
-using CongratulationsWindowView = MegaRaketa.Gameplay.CongratulationsWindow.CongratulationsWindow;
+using CongratulationsWindowView = MegaRaketa.Gameplay.UIElements.CongratulationsWindow.CongratulationsWindow;
 using UnityEngine;
 
-namespace MegaRaketa.Gameplay.WindowsContainer
+namespace MegaRaketa.Gameplay.UIElements.WindowsContainer
 {
     [CreateAssetMenu(fileName = "WindowsContainerConfig", menuName = "MegaRaketa/Windows Container Config")]
     public class WindowsContainerConfig : ScriptableObject

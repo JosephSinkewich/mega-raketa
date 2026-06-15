@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace MegaRaketa.Gameplay.Rocket
+namespace MegaRaketa.Gameplay.VisualObjects.Rocket
 {
     [CreateAssetMenu(fileName = "RocketConfig", menuName = "MegaRaketa/Rocket Config")]
     public class RocketConfig : ScriptableObject

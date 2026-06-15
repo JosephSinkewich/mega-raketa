@@ -1,4 +1,4 @@
-namespace MegaRaketa.Gameplay.WindowsContainer
+namespace MegaRaketa.Gameplay.UIElements.WindowsContainer
 {
     public interface IWindowsContainer
     {

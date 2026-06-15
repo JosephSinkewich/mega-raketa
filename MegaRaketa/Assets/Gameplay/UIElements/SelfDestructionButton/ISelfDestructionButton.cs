@@ -1,4 +1,4 @@
-namespace MegaRaketa.Gameplay.SelfDestructionButton
+namespace MegaRaketa.Gameplay.UIElements.SelfDestructionButton
 {
     public interface ISelfDestructionButton
     {

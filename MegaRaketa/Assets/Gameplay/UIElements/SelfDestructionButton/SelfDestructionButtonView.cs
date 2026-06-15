@@ -1,7 +1,7 @@
 using UnityEngine.UI;
 using UnityEngine;
 
-namespace MegaRaketa.Gameplay.SelfDestructionButton
+namespace MegaRaketa.Gameplay.UIElements.SelfDestructionButton
 {
     [RequireComponent(typeof(Button))]
     public class SelfDestructionButtonView : MonoBehaviour

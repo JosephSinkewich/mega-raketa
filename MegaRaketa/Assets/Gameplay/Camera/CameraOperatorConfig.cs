@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace MegaRaketa.Gameplay.CameraOperator
+namespace MegaRaketa.Gameplay.Camera
 {
     [CreateAssetMenu(fileName = "CameraOperatorConfig", menuName = "MegaRaketa/Camera Operator Config")]
     public class CameraOperatorConfig : ScriptableObject

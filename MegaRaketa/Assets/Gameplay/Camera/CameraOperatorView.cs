@@ -1,15 +1,15 @@
 using UnityEngine;
 
-namespace MegaRaketa.Gameplay.CameraOperator
+namespace MegaRaketa.Gameplay.Camera
 {
-    [RequireComponent(typeof(Camera))]
+    [RequireComponent(typeof(UnityEngine.Camera))]
     public class CameraOperatorView : MonoBehaviour
     {
-        public Camera Camera { get; private set; }
+        public UnityEngine.Camera Camera { get; private set; }
 
         private void Awake()
         {
-            Camera = GetComponent<Camera>();
+            Camera = GetComponent<UnityEngine.Camera>();
         }
     }
 }

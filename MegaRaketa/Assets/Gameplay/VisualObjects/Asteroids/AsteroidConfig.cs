@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace MegaRaketa.Gameplay.Asteroids
+namespace MegaRaketa.Gameplay.VisualObjects.Asteroids
 {
     [CreateAssetMenu(fileName = "AsteroidConfig", menuName = "MegaRaketa/Asteroid Config")]
     public class AsteroidConfig : ScriptableObject

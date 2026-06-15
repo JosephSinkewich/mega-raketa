@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
-using MegaRaketa.Gameplay.Asteroids;
-using MegaRaketa.Gameplay.Rocket;
+using MegaRaketa.Gameplay.VisualObjects.Asteroids;
+using MegaRaketa.Gameplay.VisualObjects.Rocket;
 using MegaRaketa.Gameplay.VisualObjects;
 using UnityEngine;
 using Zenject;
 
-namespace MegaRaketa.Gameplay.CameraOperator
+namespace MegaRaketa.Gameplay.Camera
 {
     public class CameraOperator : ICameraOperator, ILateTickable, IInitializable, IDisposable
     {

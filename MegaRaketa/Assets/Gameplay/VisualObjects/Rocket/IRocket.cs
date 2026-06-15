@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace MegaRaketa.Gameplay.Rocket
+namespace MegaRaketa.Gameplay.VisualObjects.Rocket
 {
     public interface IRocket
     {

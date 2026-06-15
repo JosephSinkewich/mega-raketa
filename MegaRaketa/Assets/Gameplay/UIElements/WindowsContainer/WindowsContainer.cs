@@ -1,8 +1,9 @@
+using CongratulationsWindowView = MegaRaketa.Gameplay.UIElements.CongratulationsWindow.CongratulationsWindow;
 using MegaRaketa.SceneContext;
 using UnityEngine;
 using Zenject;
 
-namespace MegaRaketa.Gameplay.WindowsContainer
+namespace MegaRaketa.Gameplay.UIElements.WindowsContainer
 {
     public class WindowsContainer : IWindowsContainer
     {
@@ -11,7 +12,7 @@ namespace MegaRaketa.Gameplay.WindowsContainer
 
         public void ShowCongratulationsWindow(int score)
         {
-            CongratulationsWindow.CongratulationsWindow window = UnityEngine.Object.Instantiate(
+            CongratulationsWindowView window = UnityEngine.Object.Instantiate(
                 _config.CongratulationsWindowPrefab,
                 _windowsParent);
             window.Initialize(score);

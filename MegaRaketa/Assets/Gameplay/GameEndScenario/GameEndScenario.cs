@@ -1,9 +1,9 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using MegaRaketa.Gameplay.Rocket;
-using MegaRaketa.Gameplay.ScoreCounter;
-using MegaRaketa.Gameplay.WindowsContainer;
+using MegaRaketa.Gameplay.VisualObjects.Rocket;
+using MegaRaketa.Gameplay.UIElements.ScoreCounter;
+using MegaRaketa.Gameplay.UIElements.WindowsContainer;
 using Zenject;
 
 namespace MegaRaketa.Gameplay.GameEndScenario

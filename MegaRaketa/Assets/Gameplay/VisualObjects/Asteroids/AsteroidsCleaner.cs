@@ -1,8 +1,8 @@
-using MegaRaketa.Gameplay.Rocket;
+using MegaRaketa.Gameplay.VisualObjects.Rocket;
 using UnityEngine;
 using Zenject;
 
-namespace MegaRaketa.Gameplay.Asteroids
+namespace MegaRaketa.Gameplay.VisualObjects.Asteroids
 {
     public class AsteroidsCleaner : IInitializable, System.IDisposable    {
         [Inject] private AsteroidsCleanerView _view;

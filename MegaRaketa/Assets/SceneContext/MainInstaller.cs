@@ -1,12 +1,12 @@
-using MegaRaketa.Gameplay.Asteroids;
-using MegaRaketa.Gameplay.CameraOperator;
+using MegaRaketa.Gameplay.VisualObjects.Asteroids;
+using MegaRaketa.Gameplay.Camera;
 using MegaRaketa.Gameplay.GameEndScenario;
-using MegaRaketa.Gameplay.Rocket;
-using MegaRaketa.Gameplay.Rocket.RocketControl;
-using MegaRaketa.Gameplay.ScoreCounter;
-using MegaRaketa.Gameplay.SelfDestructionButton;
+using MegaRaketa.Gameplay.VisualObjects.Rocket;
+using MegaRaketa.Gameplay.VisualObjects.Rocket.RocketControl;
+using MegaRaketa.Gameplay.UIElements.ScoreCounter;
+using MegaRaketa.Gameplay.UIElements.SelfDestructionButton;
 using MegaRaketa.Gameplay.StartScenario;
-using MegaRaketa.Gameplay.WindowsContainer;
+using MegaRaketa.Gameplay.UIElements.WindowsContainer;
 using UnityEngine;
 using Zenject;
 

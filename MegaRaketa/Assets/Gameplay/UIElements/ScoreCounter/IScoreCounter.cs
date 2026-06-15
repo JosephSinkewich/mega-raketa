@@ -1,4 +1,4 @@
-namespace MegaRaketa.Gameplay.ScoreCounter
+namespace MegaRaketa.Gameplay.UIElements.ScoreCounter
 {
     public interface IScoreCounter
     {

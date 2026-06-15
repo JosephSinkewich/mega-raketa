@@ -1,11 +1,11 @@
 using System;
 using System.Threading;
-using MegaRaketa.Gameplay.Asteroids;
+using MegaRaketa.Gameplay.VisualObjects.Asteroids;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using Zenject;
 
-namespace MegaRaketa.Gameplay.Rocket
+namespace MegaRaketa.Gameplay.VisualObjects.Rocket
 {
     public class Rocket : IRocket, ITickable, IInitializable, IDisposable
     {

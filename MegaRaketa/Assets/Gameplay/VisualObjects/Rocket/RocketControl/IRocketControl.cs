@@ -1,4 +1,4 @@
-namespace MegaRaketa.Gameplay.Rocket.RocketControl
+namespace MegaRaketa.Gameplay.VisualObjects.Rocket.RocketControl
 {
     public interface IRocketControl
     {

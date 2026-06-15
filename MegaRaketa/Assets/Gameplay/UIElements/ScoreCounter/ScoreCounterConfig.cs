@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace MegaRaketa.Gameplay.ScoreCounter
+namespace MegaRaketa.Gameplay.UIElements.ScoreCounter
 {
     [CreateAssetMenu(fileName = "ScoreCounterConfig", menuName = "MegaRaketa/Score Counter Config")]
     public class ScoreCounterConfig : ScriptableObject

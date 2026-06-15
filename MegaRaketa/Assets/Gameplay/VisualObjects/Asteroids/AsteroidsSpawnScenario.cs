@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace MegaRaketa.Gameplay.Asteroids
+namespace MegaRaketa.Gameplay.VisualObjects.Asteroids
 {
     [CreateAssetMenu(fileName = "AsteroidsSpawnScenario", menuName = "MegaRaketa/Asteroids Spawn Scenario")]
     public class AsteroidsSpawnScenario : ScriptableObject

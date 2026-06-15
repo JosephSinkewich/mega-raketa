@@ -1,9 +1,9 @@
-using MegaRaketa.Gameplay.Rocket;
+using MegaRaketa.Gameplay.VisualObjects.Rocket;
 using MegaRaketa.Gameplay.VisualObjects;
 using UnityEngine;
 using Zenject;
 
-namespace MegaRaketa.Gameplay.Asteroids
+namespace MegaRaketa.Gameplay.VisualObjects.Asteroids
 {
     public class AsteroidsSpawner : IAsteroidsSpawner, ITickable, IInitializable, System.IDisposable
     {

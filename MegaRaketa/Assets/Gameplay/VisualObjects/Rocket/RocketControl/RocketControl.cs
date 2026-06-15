@@ -1,9 +1,9 @@
 using System;
-using MegaRaketa.Gameplay.Rocket;
+using MegaRaketa.Gameplay.VisualObjects.Rocket;
 using UnityEngine;
 using Zenject;
 
-namespace MegaRaketa.Gameplay.Rocket.RocketControl
+namespace MegaRaketa.Gameplay.VisualObjects.Rocket.RocketControl
 {
     public class RocketControl : IRocketControl, ITickable, IInitializable, IDisposable
     {
@@ -50,7 +50,7 @@ namespace MegaRaketa.Gameplay.Rocket.RocketControl
                 return false;
             }
 
-            Camera mainCamera = Camera.main;
+            UnityEngine.Camera mainCamera = UnityEngine.Camera.main;
 
             if (mainCamera == null)
             {

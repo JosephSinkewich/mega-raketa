@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace MegaRaketa.Gameplay.CameraOperator
+namespace MegaRaketa.Gameplay.Camera
 {
     public interface ICameraOperator
     {

@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace MegaRaketa.Gameplay.Asteroids
+namespace MegaRaketa.Gameplay.VisualObjects.Asteroids
 {
     [RequireComponent(typeof(CircleCollider2D))]
     public class AsteroidsCleanerView : MonoBehaviour

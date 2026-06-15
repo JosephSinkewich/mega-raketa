@@ -1,4 +1,4 @@
-namespace MegaRaketa.Gameplay.Rocket
+namespace MegaRaketa.Gameplay.VisualObjects.Rocket
 {
     public class RocketAsteroidCollisionEventData
     {

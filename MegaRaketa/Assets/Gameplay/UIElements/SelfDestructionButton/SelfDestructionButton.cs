@@ -1,8 +1,8 @@
 using System;
-using MegaRaketa.Gameplay.Rocket;
+using MegaRaketa.Gameplay.VisualObjects.Rocket;
 using Zenject;
 
-namespace MegaRaketa.Gameplay.SelfDestructionButton
+namespace MegaRaketa.Gameplay.UIElements.SelfDestructionButton
 {
     public class SelfDestructionButton : ISelfDestructionButton, IInitializable, IDisposable
     {

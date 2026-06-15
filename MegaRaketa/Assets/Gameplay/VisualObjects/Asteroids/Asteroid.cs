@@ -2,7 +2,7 @@ using MegaRaketa.Gameplay.VisualObjects;
 using UnityEngine;
 using Zenject;
 
-namespace MegaRaketa.Gameplay.Asteroids
+namespace MegaRaketa.Gameplay.VisualObjects.Asteroids
 {
     public class Asteroid : ITickable, System.IDisposable
     {

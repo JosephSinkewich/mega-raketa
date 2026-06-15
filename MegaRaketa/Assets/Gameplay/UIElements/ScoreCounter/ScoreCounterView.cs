@@ -1,7 +1,7 @@
 using TMPro;
 using UnityEngine;
 
-namespace MegaRaketa.Gameplay.ScoreCounter
+namespace MegaRaketa.Gameplay.UIElements.ScoreCounter
 {
     [RequireComponent(typeof(TMP_Text))]
     public class ScoreCounterView : MonoBehaviour

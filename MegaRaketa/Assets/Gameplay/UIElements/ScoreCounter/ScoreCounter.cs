@@ -1,8 +1,8 @@
 using System;
-using MegaRaketa.Gameplay.Rocket;
+using MegaRaketa.Gameplay.VisualObjects.Rocket;
 using Zenject;
 
-namespace MegaRaketa.Gameplay.ScoreCounter
+namespace MegaRaketa.Gameplay.UIElements.ScoreCounter
 {
     public class ScoreCounter : IScoreCounter, IInitializable, IDisposable
     {

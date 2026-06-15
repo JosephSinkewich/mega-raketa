@@ -1,10 +1,10 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using MegaRaketa.Gameplay.Asteroids;
-using MegaRaketa.Gameplay.CameraOperator;
-using MegaRaketa.Gameplay.Rocket;
-using MegaRaketa.Gameplay.Rocket.RocketControl;
-using MegaRaketa.Gameplay.SelfDestructionButton;
+using MegaRaketa.Gameplay.VisualObjects.Asteroids;
+using MegaRaketa.Gameplay.Camera;
+using MegaRaketa.Gameplay.VisualObjects.Rocket;
+using MegaRaketa.Gameplay.VisualObjects.Rocket.RocketControl;
+using MegaRaketa.Gameplay.UIElements.SelfDestructionButton;
 using MegaRaketa.SceneContext;
 using MegaRaketa.Tweens;
 using PrimeTween;
