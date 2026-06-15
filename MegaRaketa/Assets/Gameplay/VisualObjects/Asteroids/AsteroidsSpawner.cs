@@ -18,11 +18,15 @@ namespace MegaRaketa.Gameplay.Asteroids
         private float _sectionEndY;
         private float _asteroidsFrequency;
         private float _nextSpawnTime;
+        private int _startScenarioSectionIndex;
+        private int _loopedScenarioSectionIndex;
+        private bool _isStartScenarioCompleted;
+        private AsteroidsSpawnSection _activeSection;
         private bool _isLocked = true;
 
         private void Update()
         {
-            if (_isLocked || _asteroidPrefab == null)
+            if (_isLocked || _asteroidPrefab == null || _activeSection == null)
             {
                 return;
             }
@@ -47,17 +51,60 @@ namespace MegaRaketa.Gameplay.Asteroids
             }
 
             _isLocked = false;
+            _startScenarioSectionIndex = 0;
+            _loopedScenarioSectionIndex = 0;
+            _isStartScenarioCompleted = false;
             InitializeSection();
             ScheduleNextSpawn();
         }
 
         private void InitializeSection()
         {
-            float sectionLength = Random.Range(_config.SectionLengthRange.x, _config.SectionLengthRange.y);
+            AsteroidsSpawnSection section = GetNextSection();
 
+            if (section == null)
+            {
+                _activeSection = null;
+                return;
+            }
+
+            ApplySection(section);
+        }
+
+        private AsteroidsSpawnSection GetNextSection()
+        {
+            if (!_isStartScenarioCompleted)
+            {
+                AsteroidsSpawnScenario startScenario = _config.StartScenario;
+
+                if (startScenario != null && _startScenarioSectionIndex < startScenario.SectionCount)
+                {
+                    return startScenario.GetSection(_startScenarioSectionIndex++);
+                }
+
+                _isStartScenarioCompleted = true;
+                _loopedScenarioSectionIndex = 0;
+            }
+
+            AsteroidsSpawnScenario loopedScenario = _config.LoopedScenario;
+
+            if (loopedScenario == null || loopedScenario.SectionCount == 0)
+            {
+                return null;
+            }
+
+            AsteroidsSpawnSection section = loopedScenario.GetSection(_loopedScenarioSectionIndex);
+            _loopedScenarioSectionIndex = (_loopedScenarioSectionIndex + 1) % loopedScenario.SectionCount;
+
+            return section;
+        }
+
+        private void ApplySection(AsteroidsSpawnSection section)
+        {
+            _activeSection = section;
             _sectionStartY = _rocket.Position.y;
-            _sectionEndY = _sectionStartY + sectionLength;
-            _asteroidsFrequency = Random.Range(_config.AsteroidsFrequencyRange.x, _config.AsteroidsFrequencyRange.y);
+            _sectionEndY = _sectionStartY + Random.Range(section.SectionLengthRange.x, section.SectionLengthRange.y);
+            _asteroidsFrequency = Random.Range(section.AsteroidsFrequencyRange.x, section.AsteroidsFrequencyRange.y);
         }
 
         private void SpawnAsteroid()
@@ -74,15 +121,16 @@ namespace MegaRaketa.Gameplay.Asteroids
                 spawnDirection.y,
                 0f) * _config.SpawnRadius;
 
+            float speed = Random.Range(_activeSection.AsteroidSpeedRange.x, _activeSection.AsteroidSpeedRange.y);
+            float rotationSpeed = Random.Range(_activeSection.AsteroidRotationSpeedRange.x, _activeSection.AsteroidRotationSpeedRange.y);
+            float size = Random.Range(_activeSection.AsteroidSizeRange.x, _activeSection.AsteroidSizeRange.y);
+
             Asteroid asteroid = _instantiator.InstantiatePrefabForComponent<Asteroid>(
                 _asteroidPrefab,
                 position,
                 Quaternion.identity,
                 _sceneVisualObjects.AsteroidsContainer);
-            asteroid.Initialize(
-                Random.Range(_config.AsteroidsSpeedRange.x, _config.AsteroidsSpeedRange.y),
-                Random.Range(_config.AsteroidsRotationSpeedRange.x, _config.AsteroidsRotationSpeedRange.y),
-                Random.Range(_config.AsteroidsSizeRange.x, _config.AsteroidsSizeRange.y));
+            asteroid.Initialize(speed, rotationSpeed, size);
         }
 
         private void ScheduleNextSpawn()
