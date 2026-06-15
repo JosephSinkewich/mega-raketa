@@ -23,6 +23,10 @@ namespace MegaRaketa.Marketing
         [SerializeField] private Color _groundColor = new Color(0.415f, 0.415f, 0.415f, 1f);
         [SerializeField] private bool _overrideCameraBackground;
         [SerializeField] private Color _cameraBackgroundColor = Color.black;
+        [SerializeField] private bool _overrideRocketSprite;
+        [SerializeField] private Sprite _rocketSprite;
+        [SerializeField] private bool _overrideAsteroidSprite;
+        [SerializeField] private Sprite _asteroidSprite;
 
         [Header("Particles")]
         [SerializeField] private bool _engineFireEnabled = true;
@@ -63,6 +67,10 @@ namespace MegaRaketa.Marketing
         public Color GroundColor => _groundColor;
         public bool OverrideCameraBackground => _overrideCameraBackground;
         public Color CameraBackgroundColor => _cameraBackgroundColor;
+        public bool OverrideRocketSprite => _overrideRocketSprite;
+        public Sprite RocketSprite => _rocketSprite;
+        public bool OverrideAsteroidSprite => _overrideAsteroidSprite;
+        public Sprite AsteroidSprite => _asteroidSprite;
         public bool EngineFireEnabled => _engineFireEnabled;
         public float EngineFireIntensity => _engineFireIntensity;
         public bool AsteroidTrailEnabled => _asteroidTrailEnabled;

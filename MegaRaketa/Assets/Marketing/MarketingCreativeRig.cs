@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using MegaRaketa.Gameplay.Camera;
 using MegaRaketa.Gameplay.GameEndScenario;
 using MegaRaketa.Gameplay.StartScenario;
@@ -28,6 +29,10 @@ namespace MegaRaketa.Marketing
         private TMP_Text _launchTextLabel;
         private TMP_Text _scoreTextLabel;
         private ParticleSystem _engineFire;
+        private SpriteRenderer _rocketSpriteRenderer;
+        private Sprite _baselineRocketSprite;
+        private bool _hasRocketSpriteBaseline;
+        private readonly Dictionary<SpriteRenderer, Sprite> _asteroidSpriteBaselines = new Dictionary<SpriteRenderer, Sprite>();
         private float _baselineEngineFireRate;
         private ParticleSystem.MinMaxGradient _baselineEngineFireStartColor;
         private bool _hasEngineFireBaseline;
@@ -63,6 +68,7 @@ namespace MegaRaketa.Marketing
         private void OnDisable()
         {
             RestorePlayModeSnapshots();
+            RestoreSpriteBaselines();
         }
 
         private void Update()
@@ -108,6 +114,7 @@ namespace MegaRaketa.Marketing
             if (_rocketView != null)
             {
                 _engineFire = _rocketView.EngineFire;
+                _rocketSpriteRenderer = _rocketView.GetComponentInChildren<SpriteRenderer>(true);
             }
 
             if (_camera == null)
@@ -261,6 +268,7 @@ namespace MegaRaketa.Marketing
             ApplyUiVisibility();
             ApplyUiStyle();
             ApplySceneLook();
+            ApplySprites();
             ApplyEngineFire();
             ApplyAsteroidTrails();
             ApplyTapPulse();
@@ -312,6 +320,103 @@ namespace MegaRaketa.Marketing
             {
                 _camera.backgroundColor = _profile.CameraBackgroundColor;
             }
+        }
+
+        private void ApplySprites()
+        {
+            ApplyRocketSprite();
+            ApplyAsteroidSprites();
+        }
+
+        private void ApplyRocketSprite()
+        {
+            if (_rocketSpriteRenderer == null)
+            {
+                return;
+            }
+
+            CaptureRocketSpriteBaseline();
+
+            if (_profile.OverrideRocketSprite && _profile.RocketSprite != null)
+            {
+                _rocketSpriteRenderer.sprite = _profile.RocketSprite;
+                return;
+            }
+
+            if (_hasRocketSpriteBaseline)
+            {
+                _rocketSpriteRenderer.sprite = _baselineRocketSprite;
+            }
+        }
+
+        private void ApplyAsteroidSprites()
+        {
+            if (_asteroidsContainer == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < _asteroidsContainer.childCount; i++)
+            {
+                Transform asteroidTransform = _asteroidsContainer.GetChild(i);
+                SpriteRenderer spriteRenderer = asteroidTransform.GetComponentInChildren<SpriteRenderer>(true);
+
+                if (spriteRenderer == null)
+                {
+                    continue;
+                }
+
+                CaptureAsteroidSpriteBaseline(spriteRenderer);
+
+                if (_profile.OverrideAsteroidSprite && _profile.AsteroidSprite != null)
+                {
+                    spriteRenderer.sprite = _profile.AsteroidSprite;
+                }
+                else if (_asteroidSpriteBaselines.TryGetValue(spriteRenderer, out Sprite baselineSprite))
+                {
+                    spriteRenderer.sprite = baselineSprite;
+                }
+            }
+        }
+
+        private void CaptureRocketSpriteBaseline()
+        {
+            if (_hasRocketSpriteBaseline || _rocketSpriteRenderer == null)
+            {
+                return;
+            }
+
+            _baselineRocketSprite = _rocketSpriteRenderer.sprite;
+            _hasRocketSpriteBaseline = true;
+        }
+
+        private void CaptureAsteroidSpriteBaseline(SpriteRenderer spriteRenderer)
+        {
+            if (_asteroidSpriteBaselines.ContainsKey(spriteRenderer))
+            {
+                return;
+            }
+
+            _asteroidSpriteBaselines[spriteRenderer] = spriteRenderer.sprite;
+        }
+
+        private void RestoreSpriteBaselines()
+        {
+            if (_hasRocketSpriteBaseline && _rocketSpriteRenderer != null)
+            {
+                _rocketSpriteRenderer.sprite = _baselineRocketSprite;
+            }
+
+            foreach (KeyValuePair<SpriteRenderer, Sprite> asteroidSpriteBaseline in _asteroidSpriteBaselines)
+            {
+                if (asteroidSpriteBaseline.Key != null)
+                {
+                    asteroidSpriteBaseline.Key.sprite = asteroidSpriteBaseline.Value;
+                }
+            }
+
+            _hasRocketSpriteBaseline = false;
+            _asteroidSpriteBaselines.Clear();
         }
 
         private void ApplyEngineFire()

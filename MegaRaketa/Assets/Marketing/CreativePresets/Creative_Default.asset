@@ -25,6 +25,10 @@ MonoBehaviour:
   _groundColor: {r: 0.41509432, g: 0.41509432, b: 0.41509432, a: 1}
   _overrideCameraBackground: 0
   _cameraBackgroundColor: {r: 0, g: 0, b: 0, a: 0}
+  _overrideRocketSprite: 0
+  _rocketSprite: {fileID: 0}
+  _overrideAsteroidSprite: 0
+  _asteroidSprite: {fileID: 0}
   _engineFireEnabled: 1
   _engineFireIntensity: 1
   _asteroidTrailEnabled: 1
