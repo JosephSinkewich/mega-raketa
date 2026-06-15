@@ -12,6 +12,7 @@ namespace MegaRaketa.Gameplay.Rocket
         [SerializeField, Min(0f)] private float _maxSpeed;
         [SerializeField, Min(0f)] private float _rotationSpeed;
         [SerializeField, Min(0f)] private float _maxDeviationAngle;
+        [SerializeField] private ParticleSystem _engineFire;
 
         private float _speed;
         private float _deviationAngle;
@@ -49,6 +50,7 @@ namespace MegaRaketa.Gameplay.Rocket
             }
 
             _isLaunched = true;
+            _engineFire.Play();
             AccelerateAsync().Forget();
         }
 
