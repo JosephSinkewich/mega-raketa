@@ -138,7 +138,7 @@ MonoBehaviour:
   _acceleration: 1
   _maxSpeed: 5
   _rotationSpeed: 180
-  _maxDeviationAngle: 90
+  _maxDeviationAngle: 80
   _engineFire: {fileID: 7948997248576265487}
 --- !u!61 &8312902006276642135
 BoxCollider2D:

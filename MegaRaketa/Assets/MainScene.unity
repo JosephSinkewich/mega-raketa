@@ -789,7 +789,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _targetViewportY: 0.3
   _viewportXRange: {x: 0.1, y: 0.9}
-  _angleRange: {x: 90, y: -90}
+  _angleRange: {x: 80, y: -80}
   _smoothTime: 0.2
   _minOrthographicSize: 5
   _maxOrthographicSize: 10
