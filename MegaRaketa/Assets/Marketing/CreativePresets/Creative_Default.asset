@@ -43,3 +43,8 @@ MonoBehaviour:
   _asteroidsSpawnerUnlockDelay: 0
   _selfDestructionButtonUnlockDelay: 3
   _gameEndWindowDelay: 2
+  _applyCameraZoomOverrides: 0
+  _targetViewportY: 0.3
+  _minOrthographicSize: 5
+  _maxOrthographicSize: 10
+  _targetAsteroidCount: 10

@@ -24,6 +24,16 @@ namespace MegaRaketa.Marketing
             SerializedConfigAccess.SetVector3(config, propertyName, value);
         }
 
+        public static void SetInt(ScriptableObject config, string propertyName, int value)
+        {
+            if (config == null)
+            {
+                return;
+            }
+
+            SerializedConfigAccess.SetInt(config, propertyName, value);
+        }
+
         public static void SetObjectReference(ScriptableObject config, string propertyName, Object value)
         {
             if (config == null)
@@ -42,6 +52,11 @@ namespace MegaRaketa.Marketing
         public static Vector3 GetVector3(ScriptableObject config, string propertyName)
         {
             return config == null ? Vector3.zero : SerializedConfigAccess.GetVector3(config, propertyName);
+        }
+
+        public static int GetInt(ScriptableObject config, string propertyName)
+        {
+            return config == null ? 0 : SerializedConfigAccess.GetInt(config, propertyName);
         }
 
         public static Object GetObjectReference(ScriptableObject config, string propertyName)
@@ -79,6 +94,19 @@ namespace MegaRaketa.Marketing
             serializedObject.ApplyModifiedPropertiesWithoutUndo();
         }
 
+        public static void SetInt(ScriptableObject config, string propertyName, int value)
+        {
+            var serializedObject = new UnityEditor.SerializedObject(config);
+            UnityEditor.SerializedProperty property = serializedObject.FindProperty(propertyName);
+            if (property == null)
+            {
+                return;
+            }
+
+            property.intValue = value;
+            serializedObject.ApplyModifiedPropertiesWithoutUndo();
+        }
+
         public static void SetObjectReference(ScriptableObject config, string propertyName, Object value)
         {
             var serializedObject = new UnityEditor.SerializedObject(config);
@@ -106,6 +134,13 @@ namespace MegaRaketa.Marketing
             return property != null ? property.vector3Value : Vector3.zero;
         }
 
+        public static int GetInt(ScriptableObject config, string propertyName)
+        {
+            var serializedObject = new UnityEditor.SerializedObject(config);
+            UnityEditor.SerializedProperty property = serializedObject.FindProperty(propertyName);
+            return property != null ? property.intValue : 0;
+        }
+
         public static Object GetObjectReference(ScriptableObject config, string propertyName)
         {
             var serializedObject = new UnityEditor.SerializedObject(config);
@@ -118,9 +153,11 @@ namespace MegaRaketa.Marketing
     {
         public static void SetFloat(ScriptableObject config, string propertyName, float value) { }
         public static void SetVector3(ScriptableObject config, string propertyName, Vector3 value) { }
+        public static void SetInt(ScriptableObject config, string propertyName, int value) { }
         public static void SetObjectReference(ScriptableObject config, string propertyName, Object value) { }
         public static float GetFloat(ScriptableObject config, string propertyName) => 0f;
         public static Vector3 GetVector3(ScriptableObject config, string propertyName) => Vector3.zero;
+        public static int GetInt(ScriptableObject config, string propertyName) => 0;
         public static Object GetObjectReference(ScriptableObject config, string propertyName) => null;
     }
 #endif

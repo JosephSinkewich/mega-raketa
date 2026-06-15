@@ -54,6 +54,13 @@ namespace MegaRaketa.Marketing
         [Header("Game End (GameEndScenarioConfig)")]
         [SerializeField, Min(0f)] private float _gameEndWindowDelay = 2f;
 
+        [Header("Camera (CameraOperatorConfig)")]
+        [SerializeField] private bool _applyCameraZoomOverrides;
+        [SerializeField, Range(0f, 1f)] private float _targetViewportY = 0.3f;
+        [SerializeField, Min(0f)] private float _minOrthographicSize = 5f;
+        [SerializeField, Min(0f)] private float _maxOrthographicSize = 10f;
+        [SerializeField, Min(0)] private int _targetAsteroidCount = 10;
+
         public bool ShowLaunchText => _showLaunchText;
         public bool ShowScoreCounter => _showScoreCounter;
         public bool ShowSelfDestructButton => _showSelfDestructButton;
@@ -85,5 +92,10 @@ namespace MegaRaketa.Marketing
         public float AsteroidsSpawnerUnlockDelay => _asteroidsSpawnerUnlockDelay;
         public float SelfDestructionButtonUnlockDelay => _selfDestructionButtonUnlockDelay;
         public float GameEndWindowDelay => _gameEndWindowDelay;
+        public bool ApplyCameraZoomOverrides => _applyCameraZoomOverrides;
+        public float TargetViewportY => _targetViewportY;
+        public float MinOrthographicSize => _minOrthographicSize;
+        public float MaxOrthographicSize => _maxOrthographicSize;
+        public int TargetAsteroidCount => _targetAsteroidCount;
     }
 }

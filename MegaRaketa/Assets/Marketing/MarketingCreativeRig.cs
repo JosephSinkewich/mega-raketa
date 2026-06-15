@@ -22,6 +22,7 @@ namespace MegaRaketa.Marketing
         [SerializeField] private RocketView _rocketView;
         [SerializeField] private Transform _asteroidsContainer;
         [SerializeField] private CameraShakeConfig _cameraShakeConfig;
+        [SerializeField] private CameraOperatorConfig _cameraOperatorConfig;
         [SerializeField] private StartScenarioConfig _startScenarioConfig;
         [SerializeField] private GameEndScenarioConfig _gameEndScenarioConfig;
 
@@ -39,6 +40,10 @@ namespace MegaRaketa.Marketing
         private bool _baselineEngineFireGameObjectActive = true;
         private Vector3 _baselineShakeStrength;
         private Vector3 _baselineDestructionShakeStrength;
+        private float _baselineMinOrthographicSize;
+        private float _baselineMaxOrthographicSize;
+        private float _baselineTargetViewportY;
+        private int _baselineTargetAsteroidCount;
         private float _baselineGameEndDelay;
         private float _baselineTapObjectDestroyPeriod;
         private float _baselineRocketControlUnlockDelay;
@@ -140,6 +145,22 @@ namespace MegaRaketa.Marketing
                     "_destructionStrength");
             }
 
+            if (_cameraOperatorConfig != null)
+            {
+                _baselineTargetViewportY = MarketingSerializedConfigUtility.GetFloat(
+                    _cameraOperatorConfig,
+                    "_targetViewportY");
+                _baselineMinOrthographicSize = MarketingSerializedConfigUtility.GetFloat(
+                    _cameraOperatorConfig,
+                    "_minOrthographicSize");
+                _baselineMaxOrthographicSize = MarketingSerializedConfigUtility.GetFloat(
+                    _cameraOperatorConfig,
+                    "_maxOrthographicSize");
+                _baselineTargetAsteroidCount = MarketingSerializedConfigUtility.GetInt(
+                    _cameraOperatorConfig,
+                    "_targetAsteroidCount");
+            }
+
             if (_gameEndScenarioConfig != null)
             {
                 _baselineGameEndDelay = MarketingSerializedConfigUtility.GetFloat(
@@ -202,6 +223,26 @@ namespace MegaRaketa.Marketing
                     _cameraShakeConfig,
                     "_destructionStrength",
                     _baselineDestructionShakeStrength);
+            }
+
+            if (_cameraOperatorConfig != null)
+            {
+                MarketingSerializedConfigUtility.SetFloat(
+                    _cameraOperatorConfig,
+                    "_targetViewportY",
+                    _baselineTargetViewportY);
+                MarketingSerializedConfigUtility.SetFloat(
+                    _cameraOperatorConfig,
+                    "_minOrthographicSize",
+                    _baselineMinOrthographicSize);
+                MarketingSerializedConfigUtility.SetFloat(
+                    _cameraOperatorConfig,
+                    "_maxOrthographicSize",
+                    _baselineMaxOrthographicSize);
+                MarketingSerializedConfigUtility.SetInt(
+                    _cameraOperatorConfig,
+                    "_targetAsteroidCount",
+                    _baselineTargetAsteroidCount);
             }
 
             if (_gameEndScenarioConfig != null)
@@ -512,6 +553,48 @@ namespace MegaRaketa.Marketing
                         _gameEndScenarioConfig,
                         "_windowShowDelay",
                         _profile.GameEndWindowDelay);
+                }
+            }
+
+            if (_cameraOperatorConfig != null && _playModeSnapshotsCaptured)
+            {
+                if (_profile.ApplyCameraZoomOverrides)
+                {
+                    MarketingSerializedConfigUtility.SetFloat(
+                        _cameraOperatorConfig,
+                        "_targetViewportY",
+                        _profile.TargetViewportY);
+                    MarketingSerializedConfigUtility.SetFloat(
+                        _cameraOperatorConfig,
+                        "_minOrthographicSize",
+                        _profile.MinOrthographicSize);
+                    MarketingSerializedConfigUtility.SetFloat(
+                        _cameraOperatorConfig,
+                        "_maxOrthographicSize",
+                        _profile.MaxOrthographicSize);
+                    MarketingSerializedConfigUtility.SetInt(
+                        _cameraOperatorConfig,
+                        "_targetAsteroidCount",
+                        _profile.TargetAsteroidCount);
+                }
+                else
+                {
+                    MarketingSerializedConfigUtility.SetFloat(
+                        _cameraOperatorConfig,
+                        "_targetViewportY",
+                        _baselineTargetViewportY);
+                    MarketingSerializedConfigUtility.SetFloat(
+                        _cameraOperatorConfig,
+                        "_minOrthographicSize",
+                        _baselineMinOrthographicSize);
+                    MarketingSerializedConfigUtility.SetFloat(
+                        _cameraOperatorConfig,
+                        "_maxOrthographicSize",
+                        _baselineMaxOrthographicSize);
+                    MarketingSerializedConfigUtility.SetInt(
+                        _cameraOperatorConfig,
+                        "_targetAsteroidCount",
+                        _baselineTargetAsteroidCount);
                 }
             }
 
