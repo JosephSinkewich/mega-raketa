@@ -347,6 +347,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 441171824}
+  - component: {fileID: 441171825}
+  - component: {fileID: 441171826}
   m_Layer: 0
   m_Name: VisualObjects
   m_TagString: Untagged
@@ -372,6 +374,37 @@ Transform:
   - {fileID: 805783661}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &441171825
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 441171823}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2681d0b3c41b5394790a4cf99a266036, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _asteroids: {fileID: 805783661}
+--- !u!114 &441171826
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 441171823}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0166d8ff8d905b048b2448179e1f5d11, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _components:
+  - {fileID: 441171825}
+  _identifier: 
+  _useSceneContext: 0
+  _context: {fileID: 107895778}
+  _bindType: 1
 --- !u!1 &805783660
 GameObject:
   m_ObjectHideFlags: 0
@@ -1126,7 +1159,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _asteroidPrefab: {fileID: 817706038200001724, guid: 5bf330f633b32cb45a6698ce47ca48cf, type: 3}
-  _asteroidsParent: {fileID: 805783661}
 --- !u!4 &1551365306
 Transform:
   m_ObjectHideFlags: 0

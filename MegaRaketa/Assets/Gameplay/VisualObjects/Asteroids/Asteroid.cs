@@ -1,10 +1,15 @@
+using MegaRaketa.Gameplay.VisualObjects;
 using UnityEngine;
+using Zenject;
 
 namespace MegaRaketa.Gameplay.Asteroids
 {
     public class Asteroid : MonoBehaviour
     {
         [SerializeField] private GameObject _explosionEffect;
+
+        [Inject] private ISceneVisualObjects _sceneVisualObjects;
+        [Inject] private IInstantiator _instantiator;
 
         private float _speed;
         private float _rotationSpeed;
@@ -26,7 +31,12 @@ namespace MegaRaketa.Gameplay.Asteroids
 
         public void Explode()
         {
-            Instantiate(_explosionEffect, transform.position, Quaternion.identity);
+            GameObject explosionEffect = _instantiator.InstantiatePrefab(
+                _explosionEffect,
+                transform.position,
+                Quaternion.identity,
+                _sceneVisualObjects.AsteroidsContainer);
+            explosionEffect.transform.localScale = transform.localScale;
             Destroy(gameObject);
         }
 

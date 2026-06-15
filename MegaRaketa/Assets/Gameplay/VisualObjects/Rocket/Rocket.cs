@@ -98,7 +98,7 @@ namespace MegaRaketa.Gameplay.Rocket
                 return;
             }
 
-            Destroy(asteroid.gameObject);
+            asteroid.Explode();
             OnAsteroidCollide?.Invoke();
         }
     }

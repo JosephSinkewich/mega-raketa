@@ -1,4 +1,5 @@
 using MegaRaketa.Gameplay.Rocket;
+using MegaRaketa.Gameplay.VisualObjects;
 using UnityEngine;
 using Zenject;
 
@@ -7,10 +8,11 @@ namespace MegaRaketa.Gameplay.Asteroids
     public class AsteroidsSpawner : MonoBehaviour, IAsteroidsSpawner
     {
         [SerializeField] private Asteroid _asteroidPrefab;
-        [SerializeField] private Transform _asteroidsParent;
 
         [Inject] private AsteroidsSpawnerConfig _config;
         [Inject] private IRocket _rocket;
+        [Inject] private ISceneVisualObjects _sceneVisualObjects;
+        [Inject] private IInstantiator _instantiator;
 
         private float _sectionStartY;
         private float _sectionEndY;
@@ -72,7 +74,11 @@ namespace MegaRaketa.Gameplay.Asteroids
                 spawnDirection.y,
                 0f) * _config.SpawnRadius;
 
-            Asteroid asteroid = Instantiate(_asteroidPrefab, position, Quaternion.identity, _asteroidsParent);
+            Asteroid asteroid = _instantiator.InstantiatePrefabForComponent<Asteroid>(
+                _asteroidPrefab,
+                position,
+                Quaternion.identity,
+                _sceneVisualObjects.AsteroidsContainer);
             asteroid.Initialize(
                 Random.Range(_config.AsteroidsSpeedRange.x, _config.AsteroidsSpeedRange.y),
                 Random.Range(_config.AsteroidsRotationSpeedRange.x, _config.AsteroidsRotationSpeedRange.y),
