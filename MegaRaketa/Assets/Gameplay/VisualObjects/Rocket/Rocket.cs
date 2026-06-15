@@ -20,7 +20,7 @@ namespace MegaRaketa.Gameplay.Rocket
         private Collider2D _rocketCollider;
         private Quaternion _startRotation;
 
-        public event Action OnAsteroidCollide;
+        public event Action<RocketAsteroidCollisionEventData> OnAsteroidCollide;
 
         public Vector3 Position => transform.position;
         public float DeviationAngle => _deviationAngle;
@@ -100,8 +100,9 @@ namespace MegaRaketa.Gameplay.Rocket
                 return;
             }
 
+            RocketAsteroidCollisionEventData eventData = new RocketAsteroidCollisionEventData(asteroid.Size);
             asteroid.Explode();
-            OnAsteroidCollide?.Invoke();
+            OnAsteroidCollide?.Invoke(eventData);
         }
     }
 }

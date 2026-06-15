@@ -13,12 +13,16 @@ namespace MegaRaketa.Gameplay.Asteroids
 
         private float _speed;
         private float _rotationSpeed;
+        private float _size;
         private Vector2 _direction;
+
+        public float Size => _size;
 
         public void Initialize(float speed, float rotationSpeed, float size)
         {
             _speed = speed;
             _rotationSpeed = rotationSpeed;
+            _size = size;
             _direction = Random.insideUnitCircle.normalized;
 
             if (_direction == Vector2.zero)

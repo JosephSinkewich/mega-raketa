@@ -34,7 +34,7 @@ namespace MegaRaketa.Gameplay.ScoreCounter
             }
         }
 
-        private void IncreaseScore()
+        private void IncreaseScore(RocketAsteroidCollisionEventData eventData)
         {
             _score++;
             UpdateText();

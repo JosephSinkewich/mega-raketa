@@ -5,7 +5,7 @@ namespace MegaRaketa.Gameplay.Rocket
 {
     public interface IRocket
     {
-        event Action OnAsteroidCollide;
+        event Action<RocketAsteroidCollisionEventData> OnAsteroidCollide;
 
         Vector3 Position { get; }
         float DeviationAngle { get; }
