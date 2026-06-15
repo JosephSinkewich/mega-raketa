@@ -1,47 +1,32 @@
+using System;
 using MegaRaketa.Gameplay.Rocket;
-using UnityEngine;
-using UnityEngine.UI;
 using Zenject;
 
 namespace MegaRaketa.Gameplay.SelfDestructionButton
 {
-    [RequireComponent(typeof(Button))]
-    public class SelfDestructionButton : MonoBehaviour, ISelfDestructionButton
+    public class SelfDestructionButton : ISelfDestructionButton, IInitializable, IDisposable
     {
+        [Inject] private SelfDestructionButtonView _view;
         [Inject] private IRocket _rocket;
 
-        private Button _button;
         private bool _isLocked = true;
 
-        private void Awake()
-        {
-            _button = GetComponent<Button>();
-            _button.interactable = false;
-        }
-
-        private void Start()
+        public void Initialize()
         {
             _rocket.OnExplode += HandleRocketExplode;
-            _button.onClick.AddListener(HandleClick);
+            _view.Button.onClick.AddListener(HandleClick);
         }
 
-        private void OnDestroy()
+        public void Dispose()
         {
-            if (_rocket != null)
-            {
-                _rocket.OnExplode -= HandleRocketExplode;
-            }
-
-            if (_button != null)
-            {
-                _button.onClick.RemoveListener(HandleClick);
-            }
+            _rocket.OnExplode -= HandleRocketExplode;
+            _view.Button.onClick.RemoveListener(HandleClick);
         }
 
         public void Unlock()
         {
             _isLocked = false;
-            _button.interactable = true;
+            _view.Button.interactable = true;
         }
 
         private void HandleClick()
@@ -57,7 +42,7 @@ namespace MegaRaketa.Gameplay.SelfDestructionButton
         private void HandleRocketExplode()
         {
             _isLocked = true;
-            _button.interactable = false;
+            _view.Button.interactable = false;
         }
     }
 }

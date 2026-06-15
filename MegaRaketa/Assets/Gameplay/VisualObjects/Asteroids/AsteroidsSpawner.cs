@@ -5,14 +5,14 @@ using Zenject;
 
 namespace MegaRaketa.Gameplay.Asteroids
 {
-    public class AsteroidsSpawner : MonoBehaviour, IAsteroidsSpawner
+    public class AsteroidsSpawner : IAsteroidsSpawner, ITickable, IInitializable, System.IDisposable
     {
-        [SerializeField] private Asteroid _asteroidPrefab;
-
         [Inject] private AsteroidsSpawnerConfig _config;
         [Inject] private IRocket _rocket;
         [Inject] private ISceneVisualObjects _sceneVisualObjects;
         [Inject] private IInstantiator _instantiator;
+        [Inject] private DiContainer _container;
+        [Inject] private TickableManager _tickableManager;
 
         private float _sectionStartY;
         private float _sectionEndY;
@@ -24,22 +24,19 @@ namespace MegaRaketa.Gameplay.Asteroids
         private AsteroidsSpawnSection _activeSection;
         private bool _isLocked = true;
 
-        private void Start()
+        public void Initialize()
         {
             _rocket.OnExplode += HandleRocketExplode;
         }
 
-        private void OnDestroy()
+        public void Dispose()
         {
-            if (_rocket != null)
-            {
-                _rocket.OnExplode -= HandleRocketExplode;
-            }
+            _rocket.OnExplode -= HandleRocketExplode;
         }
 
-        private void Update()
+        public void Tick()
         {
-            if (_isLocked || _asteroidPrefab == null || _activeSection == null)
+            if (_isLocked || _config.AsteroidPrefab == null || _activeSection == null)
             {
                 return;
             }
@@ -143,12 +140,14 @@ namespace MegaRaketa.Gameplay.Asteroids
             float rotationSpeed = Random.Range(_activeSection.AsteroidRotationSpeedRange.x, _activeSection.AsteroidRotationSpeedRange.y);
             float size = Random.Range(_activeSection.AsteroidSizeRange.x, _activeSection.AsteroidSizeRange.y);
 
-            Asteroid asteroid = _instantiator.InstantiatePrefabForComponent<Asteroid>(
-                _asteroidPrefab,
+            AsteroidView asteroidView = _instantiator.InstantiatePrefabForComponent<AsteroidView>(
+                _config.AsteroidPrefab,
                 position,
                 Quaternion.identity,
                 _sceneVisualObjects.AsteroidsContainer);
-            asteroid.Initialize(speed, rotationSpeed, size);
+            Asteroid asteroid = _container.Instantiate<Asteroid>();
+            asteroid.Initialize(asteroidView, speed, rotationSpeed, size);
+            _tickableManager.Add(asteroid);
         }
 
         private void ScheduleNextSpawn()

@@ -6,24 +6,20 @@ using Zenject;
 
 namespace MegaRaketa.Gameplay.CameraOperator
 {
-    public class CameraShake : MonoBehaviour
+    public class CameraShake : IInitializable, System.IDisposable
     {
-        [SerializeField, Min(0f)] private float _duration = 0.2f;
-        [SerializeField] private Vector3 _strengthPerAsteroidSize = new Vector3(0.15f, 0.15f, 0f);
-        [SerializeField, Min(1)] private int _vibrato = 10;
-        [SerializeField, Range(0f, 180f)] private float _randomness = 90f;
-
+        [Inject] private CameraShakeConfig _config;
         [Inject] private IRocket _rocket;
         [Inject] private ICameraOperator _cameraOperator;
 
         private readonly List<Tween> _activeTweens = new List<Tween>();
 
-        private void Start()
+        public void Initialize()
         {
             _rocket.OnAsteroidCollide += Shake;
         }
 
-        private void OnDestroy()
+        public void Dispose()
         {
             for (int i = _activeTweens.Count - 1; i >= 0; i--)
             {
@@ -33,16 +29,12 @@ namespace MegaRaketa.Gameplay.CameraOperator
             }
 
             _activeTweens.Clear();
-
-            if (_rocket != null)
-            {
-                _rocket.OnAsteroidCollide -= Shake;
-            }
+            _rocket.OnAsteroidCollide -= Shake;
         }
 
         private void Shake(RocketAsteroidCollisionEventData eventData)
         {
-            Vector3 strength = _strengthPerAsteroidSize * eventData.AsteroidSize;
+            Vector3 strength = _config.StrengthPerAsteroidSize * eventData.AsteroidSize;
 
             Tween tween = CreateShakeTween(strength)
                 .SetUpdate(UpdateType.Late);
@@ -52,8 +44,8 @@ namespace MegaRaketa.Gameplay.CameraOperator
         private Tween CreateShakeTween(Vector3 strength)
         {
             Sequence sequence = DOTween.Sequence();
-            int steps = _vibrato;
-            float stepDuration = _duration / steps;
+            int steps = _config.Vibrato;
+            float stepDuration = _config.Duration / steps;
             Vector3 offset = Vector3.zero;
             bool isDisposed = false;
 
@@ -102,7 +94,7 @@ namespace MegaRaketa.Gameplay.CameraOperator
 
         private Vector3 GetRandomOffset(Vector3 strength)
         {
-            float angle = Random.Range(-_randomness, _randomness) * Mathf.Deg2Rad;
+            float angle = Random.Range(-_config.Randomness, _config.Randomness) * Mathf.Deg2Rad;
             float radius = Random.Range(0.4f, 1f);
             Vector2 randomOffset = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * radius;
 
@@ -111,6 +103,5 @@ namespace MegaRaketa.Gameplay.CameraOperator
                 randomOffset.y * strength.y,
                 Random.Range(-strength.z, strength.z));
         }
-
     }
 }

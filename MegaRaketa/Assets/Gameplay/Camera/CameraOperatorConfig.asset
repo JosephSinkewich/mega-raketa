@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1c2d3e4f5a6478890a1b2c3d4e5f702, type: 3}
+  m_Name: CameraOperatorConfig
+  m_EditorClassIdentifier: 
+  _targetViewportY: 0.3
+  _viewportXRange: {x: 0.1, y: 0.9}
+  _angleRange: {x: 80, y: -80}
+  _smoothTime: 0.2
+  _minOrthographicSize: 5
+  _maxOrthographicSize: 10
+  _targetAsteroidCount: 10
+  _zoomSmoothTime: 0.5
+  _explosionOrthographicSize: 3

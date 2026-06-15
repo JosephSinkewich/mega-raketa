@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using MegaRaketa.Gameplay.Asteroids;
 using MegaRaketa.Gameplay.Rocket;
@@ -7,23 +8,13 @@ using Zenject;
 
 namespace MegaRaketa.Gameplay.CameraOperator
 {
-    [RequireComponent(typeof(Camera))]
-    public class CameraOperator : MonoBehaviour, ICameraOperator
+    public class CameraOperator : ICameraOperator, ILateTickable, IInitializable, IDisposable
     {
-        [SerializeField, Range(0f, 1f)] private float _targetViewportY = -0.0f;
-        [SerializeField] private Vector2 _viewportXRange = new Vector2(0.1f, 0.9f);
-        [SerializeField] private Vector2 _angleRange = new Vector2(45f, -45f);
-        [SerializeField, Min(0f)] private float _smoothTime = 0.2f;
-        [SerializeField, Min(0f)] private float _minOrthographicSize = 5f;
-        [SerializeField, Min(0f)] private float _maxOrthographicSize = 10f;
-        [SerializeField, Min(0)] private int _targetAsteroidCount = 5;
-        [SerializeField, Min(0f)] private float _zoomSmoothTime = 0.5f;
-        [SerializeField, Min(0f)] private float _explosionOrthographicSize = 3f;
-
+        [Inject] private CameraOperatorView _view;
+        [Inject] private CameraOperatorConfig _config;
         [Inject] private IRocket _rocket;
         [Inject] private ISceneVisualObjects _sceneVisualObjects;
 
-        private Camera _camera;
         private readonly Dictionary<object, Vector3> _offsets = new Dictionary<object, Vector3>();
         private Vector3 _followPosition;
         private Vector3 _velocity;
@@ -32,29 +23,22 @@ namespace MegaRaketa.Gameplay.CameraOperator
         private bool _isLocked = true;
         private bool _isExplosionFocus;
         private Vector3 _explosionFocusPosition;
+        private float _explosionOrthographicSize;
 
-        private void Awake()
+        public void Initialize()
         {
-            _camera = GetComponent<Camera>();
-            _followPosition = transform.position;
-            _orthographicSize = _minOrthographicSize;
-            _camera.orthographicSize = _orthographicSize;
-        }
-
-        private void Start()
-        {
+            _followPosition = _view.transform.position;
+            _orthographicSize = _config.MinOrthographicSize;
+            _view.Camera.orthographicSize = _orthographicSize;
             _rocket.OnExplode += HandleRocketExplode;
         }
 
-        private void OnDestroy()
+        public void Dispose()
         {
-            if (_rocket != null)
-            {
-                _rocket.OnExplode -= HandleRocketExplode;
-            }
+            _rocket.OnExplode -= HandleRocketExplode;
         }
 
-        private void LateUpdate()
+        public void LateTick()
         {
             if (_isLocked)
             {
@@ -64,15 +48,15 @@ namespace MegaRaketa.Gameplay.CameraOperator
             Vector3 desiredPosition = GetDesiredPosition();
             Vector3 offset = GetTotalOffset();
 
-            if (_smoothTime <= 0f)
+            if (_config.SmoothTime <= 0f)
             {
                 _followPosition = desiredPosition;
-                transform.position = _followPosition + offset;
+                _view.transform.position = _followPosition + offset;
             }
             else
             {
-                _followPosition = Vector3.SmoothDamp(_followPosition, desiredPosition, ref _velocity, _smoothTime);
-                transform.position = _followPosition + offset;
+                _followPosition = Vector3.SmoothDamp(_followPosition, desiredPosition, ref _velocity, _config.SmoothTime);
+                _view.transform.position = _followPosition + offset;
             }
 
             UpdateZoom();
@@ -81,7 +65,7 @@ namespace MegaRaketa.Gameplay.CameraOperator
         public void Unlock()
         {
             _isLocked = false;
-            _followPosition = transform.position - GetTotalOffset();
+            _followPosition = _view.transform.position - GetTotalOffset();
         }
 
         public void FocusOnExplosion(Vector3 position, float orthographicSize)
@@ -90,7 +74,7 @@ namespace MegaRaketa.Gameplay.CameraOperator
             _explosionFocusPosition = position;
             _explosionOrthographicSize = orthographicSize;
             _isLocked = false;
-            _followPosition = transform.position - GetTotalOffset();
+            _followPosition = _view.transform.position - GetTotalOffset();
         }
 
         public void SetOffset(object key, Vector3 offset)
@@ -116,11 +100,11 @@ namespace MegaRaketa.Gameplay.CameraOperator
         private Vector3 GetDesiredPosition()
         {
             Vector3 rocketPosition = _isExplosionFocus ? _explosionFocusPosition : _rocket.Position;
-            float rocketDepth = Vector3.Dot(rocketPosition - _followPosition, transform.forward);
+            float rocketDepth = Vector3.Dot(rocketPosition - _followPosition, _view.transform.forward);
             float targetViewportX = _isExplosionFocus ? 0.5f : GetTargetViewportX();
-            Vector3 viewportPoint = new Vector3(targetViewportX, _targetViewportY, rocketDepth);
-            Vector3 currentWorldPoint = _camera.ViewportToWorldPoint(viewportPoint);
-            currentWorldPoint += _followPosition - transform.position;
+            Vector3 viewportPoint = new Vector3(targetViewportX, _config.TargetViewportY, rocketDepth);
+            Vector3 currentWorldPoint = _view.Camera.ViewportToWorldPoint(viewportPoint);
+            currentWorldPoint += _followPosition - _view.transform.position;
 
             return _followPosition + rocketPosition - currentWorldPoint;
         }
@@ -140,9 +124,9 @@ namespace MegaRaketa.Gameplay.CameraOperator
         private float GetTargetViewportX()
         {
             float angle = -_rocket.DeviationAngle;
-            float rangeProgress = Mathf.InverseLerp(_angleRange.x, _angleRange.y, angle);
+            float rangeProgress = Mathf.InverseLerp(_config.AngleRange.x, _config.AngleRange.y, angle);
 
-            return Mathf.Lerp(_viewportXRange.x, _viewportXRange.y, rangeProgress);
+            return Mathf.Lerp(_config.ViewportXRange.x, _config.ViewportXRange.y, rangeProgress);
         }
 
         private void UpdateZoom()
@@ -151,7 +135,7 @@ namespace MegaRaketa.Gameplay.CameraOperator
                 ? _explosionOrthographicSize
                 : GetDesiredOrthographicSize(CountVisibleAsteroids());
 
-            if (_zoomSmoothTime <= 0f)
+            if (_config.ZoomSmoothTime <= 0f)
             {
                 _orthographicSize = desiredOrthographicSize;
             }
@@ -161,29 +145,29 @@ namespace MegaRaketa.Gameplay.CameraOperator
                     _orthographicSize,
                     desiredOrthographicSize,
                     ref _zoomVelocity,
-                    _zoomSmoothTime);
+                    _config.ZoomSmoothTime);
             }
 
-            _camera.orthographicSize = _orthographicSize;
+            _view.Camera.orthographicSize = _orthographicSize;
         }
 
         private void HandleRocketExplode()
         {
             Vector3 explosionPosition = _rocket.Position;
-            FocusOnExplosion(explosionPosition, _explosionOrthographicSize);
+            FocusOnExplosion(explosionPosition, _config.ExplosionOrthographicSize);
         }
 
         private float GetDesiredOrthographicSize(int visibleAsteroidCount)
         {
-            if (visibleAsteroidCount >= _targetAsteroidCount)
+            if (visibleAsteroidCount >= _config.TargetAsteroidCount)
             {
-                return _minOrthographicSize;
+                return _config.MinOrthographicSize;
             }
 
-            float maxOrthographicSize = Mathf.Max(_minOrthographicSize, _maxOrthographicSize);
-            float zoomProgress = 1f - (float)visibleAsteroidCount / _targetAsteroidCount;
+            float maxOrthographicSize = Mathf.Max(_config.MinOrthographicSize, _config.MaxOrthographicSize);
+            float zoomProgress = 1f - (float)visibleAsteroidCount / _config.TargetAsteroidCount;
 
-            return Mathf.Lerp(_minOrthographicSize, maxOrthographicSize, zoomProgress);
+            return Mathf.Lerp(_config.MinOrthographicSize, maxOrthographicSize, zoomProgress);
         }
 
         private int CountVisibleAsteroids()
@@ -199,12 +183,12 @@ namespace MegaRaketa.Gameplay.CameraOperator
             for (int i = 0; i < asteroidsContainer.childCount; i++)
             {
                 Transform asteroidTransform = asteroidsContainer.GetChild(i);
-                if (asteroidTransform.GetComponent<Asteroid>() == null)
+                if (asteroidTransform.GetComponent<AsteroidView>() == null)
                 {
                     continue;
                 }
 
-                Vector3 viewportPoint = _camera.WorldToViewportPoint(asteroidTransform.position);
+                Vector3 viewportPoint = _view.Camera.WorldToViewportPoint(asteroidTransform.position);
                 if (viewportPoint.z < 0f)
                 {
                     continue;

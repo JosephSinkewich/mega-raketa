@@ -4,31 +4,22 @@ using Zenject;
 
 namespace MegaRaketa.Gameplay.Asteroids
 {
-    [RequireComponent(typeof(CircleCollider2D))]
-    public class AsteroidsCleaner : MonoBehaviour
-    {
+    public class AsteroidsCleaner : IInitializable, System.IDisposable    {
+        [Inject] private AsteroidsCleanerView _view;
         [Inject] private IRocket _rocket;
 
-        private CircleCollider2D _collider;
         private bool _isLocked;
 
-        private void Awake()
-        {
-            _collider = GetComponent<CircleCollider2D>();
-            _collider.isTrigger = true;
-        }
-
-        private void Start()
+        public void Initialize()
         {
             _rocket.OnExplode += HandleRocketExplode;
+            _view.TriggerExited += HandleTriggerExit;
         }
 
-        private void OnDestroy()
+        public void Dispose()
         {
-            if (_rocket != null)
-            {
-                _rocket.OnExplode -= HandleRocketExplode;
-            }
+            _rocket.OnExplode -= HandleRocketExplode;
+            _view.TriggerExited -= HandleTriggerExit;
         }
 
         private void HandleRocketExplode()
@@ -36,21 +27,22 @@ namespace MegaRaketa.Gameplay.Asteroids
             _isLocked = true;
         }
 
-        private void OnTriggerExit2D(Collider2D other)
+        private void HandleTriggerExit(Collider2D other)
         {
             if (_isLocked)
             {
                 return;
             }
 
-            Asteroid asteroid = other.GetComponent<Asteroid>();
+            AsteroidView asteroidView = other.GetComponent<AsteroidView>();
 
-            if (asteroid == null)
+            if (asteroidView == null)
             {
                 return;
             }
 
-            Destroy(asteroid.gameObject);
+            asteroidView.Asteroid?.Dispose();
+            Object.Destroy(asteroidView.gameObject);
         }
     }
 }

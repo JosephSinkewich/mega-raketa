@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using MegaRaketa.Gameplay.Asteroids;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -6,46 +7,49 @@ using Zenject;
 
 namespace MegaRaketa.Gameplay.Rocket
 {
-    [RequireComponent(typeof(Collider2D))]
-    public class Rocket : MonoBehaviour, IRocket
+    public class Rocket : IRocket, ITickable, IInitializable, IDisposable
     {
-        [SerializeField, Min(0f)] private float _acceleration;
-        [SerializeField, Min(0f)] private float _maxSpeed;
-        [SerializeField, Min(0f)] private float _rotationSpeed;
-        [SerializeField, Min(0f)] private float _maxDeviationAngle;
-        [SerializeField] private ParticleSystem _engineFire;
-        [SerializeField] private GameObject _explosionEffect;
-
+        [Inject] private RocketView _view;
+        [Inject] private RocketConfig _config;
         [Inject] private IInstantiator _instantiator;
 
         private float _speed;
         private float _deviationAngle;
         private bool _isLaunched;
         private bool _isExploded;
-        private Collider2D _rocketCollider;
         private Quaternion _startRotation;
+        private CancellationTokenSource _cancellationTokenSource;
 
         public event Action<RocketAsteroidCollisionEventData> OnAsteroidCollide;
         public event Action OnExplode;
 
-        public Vector3 Position => transform.position;
+        public Vector3 Position => _view.transform.position;
         public float DeviationAngle => _deviationAngle;
 
-        private void Awake()
+        public void Initialize()
         {
-            _rocketCollider = GetComponent<Collider2D>();
-            _startRotation = transform.rotation;
+            _startRotation = _view.transform.rotation;
+            _view.TriggerEntered += HandleTriggerEnter;
+            _cancellationTokenSource = new CancellationTokenSource();
         }
 
-        private void Update()
+        public void Dispose()
         {
-            Vector3 direction = transform.rotation * Vector3.up;
-            transform.position += direction * (_speed * Time.deltaTime);
+            _view.TriggerEntered -= HandleTriggerEnter;
+            _cancellationTokenSource?.Cancel();
+            _cancellationTokenSource?.Dispose();
+            _cancellationTokenSource = null;
         }
 
-        private void OnTriggerEnter2D(Collider2D other)
+        public void Tick()
         {
-            DestroyAsteroid(other);
+            if (_isExploded)
+            {
+                return;
+            }
+
+            Vector3 direction = _view.transform.rotation * Vector3.up;
+            _view.transform.position += direction * (_speed * Time.deltaTime);
         }
 
         public void Launch()
@@ -56,7 +60,7 @@ namespace MegaRaketa.Gameplay.Rocket
             }
 
             _isLaunched = true;
-            _engineFire.Play();
+            _view.EngineFire.Play();
             AccelerateAsync().Forget();
         }
 
@@ -70,26 +74,12 @@ namespace MegaRaketa.Gameplay.Rocket
             _isExploded = true;
             OnExplode?.Invoke();
             SpawnExplosionEffect();
-            Destroy(gameObject);
-        }
-
-        private void SpawnExplosionEffect()
-        {
-            if (_explosionEffect == null)
-            {
-                return;
-            }
-
-            _instantiator.InstantiatePrefab(
-                _explosionEffect,
-                transform.position,
-                transform.rotation,
-                transform.parent);
+            _view.DestroyObject();
         }
 
         public void RotateTo(Vector3 targetPoint)
         {
-            Vector3 directionToTarget = targetPoint - transform.position;
+            Vector3 directionToTarget = targetPoint - _view.transform.position;
 
             if (directionToTarget == Vector3.zero)
             {
@@ -99,42 +89,61 @@ namespace MegaRaketa.Gameplay.Rocket
             Vector3 startDirection = _startRotation * Vector3.up;
             float targetDeviationAngle = Vector3.SignedAngle(startDirection, directionToTarget, Vector3.forward);
 
-            targetDeviationAngle = Mathf.Clamp(targetDeviationAngle, -_maxDeviationAngle, _maxDeviationAngle);
-            _deviationAngle = Mathf.MoveTowards(_deviationAngle, targetDeviationAngle, _rotationSpeed * Time.deltaTime);
+            targetDeviationAngle = Mathf.Clamp(targetDeviationAngle, -_config.MaxDeviationAngle, _config.MaxDeviationAngle);
+            _deviationAngle = Mathf.MoveTowards(_deviationAngle, targetDeviationAngle, _config.RotationSpeed * Time.deltaTime);
 
-            transform.rotation = Quaternion.AngleAxis(_deviationAngle, Vector3.forward) * _startRotation;
+            _view.transform.rotation = Quaternion.AngleAxis(_deviationAngle, Vector3.forward) * _startRotation;
         }
 
         private async UniTask AccelerateAsync()
         {
-            if (_acceleration <= 0f)
+            if (_config.Acceleration <= 0f)
             {
                 return;
             }
 
-            while (_speed < _maxSpeed)
+            while (_speed < _config.MaxSpeed)
             {
-                _speed = Mathf.MoveTowards(_speed, _maxSpeed, _acceleration * Time.deltaTime);
-                await UniTask.Yield(cancellationToken: destroyCancellationToken);
+                _speed = Mathf.MoveTowards(_speed, _config.MaxSpeed, _config.Acceleration * Time.deltaTime);
+                await UniTask.Yield(cancellationToken: _cancellationTokenSource.Token);
             }
+        }
+
+        private void HandleTriggerEnter(Collider2D other)
+        {
+            DestroyAsteroid(other);
+        }
+
+        private void SpawnExplosionEffect()
+        {
+            if (_config.ExplosionEffect == null)
+            {
+                return;
+            }
+
+            _instantiator.InstantiatePrefab(
+                _config.ExplosionEffect,
+                _view.transform.position,
+                _view.transform.rotation,
+                _view.transform.parent);
         }
 
         private void DestroyAsteroid(Collider2D other)
         {
-            if (_rocketCollider == null || !_rocketCollider.IsTouching(other))
+            if (_view.Collider == null || !_view.Collider.IsTouching(other))
             {
                 return;
             }
 
-            Asteroid asteroid = other.GetComponentInParent<Asteroid>();
+            AsteroidView asteroidView = other.GetComponentInParent<AsteroidView>();
 
-            if (asteroid == null)
+            if (asteroidView == null || asteroidView.Asteroid == null)
             {
                 return;
             }
 
-            RocketAsteroidCollisionEventData eventData = new RocketAsteroidCollisionEventData(asteroid.Size);
-            asteroid.Explode();
+            RocketAsteroidCollisionEventData eventData = new RocketAsteroidCollisionEventData(asteroidView.Asteroid.Size);
+            asteroidView.Asteroid.Explode();
             OnAsteroidCollide?.Invoke(eventData);
         }
     }

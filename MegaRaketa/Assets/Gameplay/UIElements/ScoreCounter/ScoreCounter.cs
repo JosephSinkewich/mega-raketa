@@ -1,39 +1,28 @@
+using System;
 using MegaRaketa.Gameplay.Rocket;
-using TMPro;
-using UnityEngine;
 using Zenject;
 
 namespace MegaRaketa.Gameplay.ScoreCounter
 {
-    [RequireComponent(typeof(TMP_Text))]
-    public class ScoreCounter : MonoBehaviour, IScoreCounter
+    public class ScoreCounter : IScoreCounter, IInitializable, IDisposable
     {
-        [SerializeField] private string _textFormat = "Score: {0}";
-
+        [Inject] private ScoreCounterView _view;
+        [Inject] private ScoreCounterConfig _config;
         [Inject] private IRocket _rocket;
 
-        private TMP_Text _text;
         private int _score;
 
         public int Score => _score;
 
-        private void Awake()
-        {
-            _text = GetComponent<TMP_Text>();
-        }
-
-        private void Start()
+        public void Initialize()
         {
             _rocket.OnAsteroidCollide += IncreaseScore;
             UpdateText();
         }
 
-        private void OnDestroy()
+        public void Dispose()
         {
-            if (_rocket != null)
-            {
-                _rocket.OnAsteroidCollide -= IncreaseScore;
-            }
+            _rocket.OnAsteroidCollide -= IncreaseScore;
         }
 
         private void IncreaseScore(RocketAsteroidCollisionEventData eventData)
@@ -44,7 +33,7 @@ namespace MegaRaketa.Gameplay.ScoreCounter
 
         private void UpdateText()
         {
-            _text.text = string.Format(_textFormat, _score);
+            _view.Text.text = string.Format(_config.TextFormat, _score);
         }
     }
 }

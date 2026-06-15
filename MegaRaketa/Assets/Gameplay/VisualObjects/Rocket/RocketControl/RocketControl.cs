@@ -1,28 +1,27 @@
+using System;
+using MegaRaketa.Gameplay.Rocket;
 using UnityEngine;
 using Zenject;
 
 namespace MegaRaketa.Gameplay.Rocket.RocketControl
 {
-    public class RocketControl : MonoBehaviour, IRocketControl
+    public class RocketControl : IRocketControl, ITickable, IInitializable, IDisposable
     {
         [Inject] private IRocket _rocket;
 
         private bool _isLocked = true;
 
-        private void Start()
+        public void Initialize()
         {
             _rocket.OnExplode += HandleRocketExplode;
         }
 
-        private void OnDestroy()
+        public void Dispose()
         {
-            if (_rocket != null)
-            {
-                _rocket.OnExplode -= HandleRocketExplode;
-            }
+            _rocket.OnExplode -= HandleRocketExplode;
         }
 
-        private void Update()
+        public void Tick()
         {
             if (_isLocked || !TryGetPointerWorldPoint(out Vector3 targetPoint))
             {

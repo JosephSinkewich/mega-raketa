@@ -1,9 +1,11 @@
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using MegaRaketa.Gameplay.Asteroids;
 using MegaRaketa.Gameplay.CameraOperator;
 using MegaRaketa.Gameplay.Rocket;
 using MegaRaketa.Gameplay.Rocket.RocketControl;
 using MegaRaketa.Gameplay.SelfDestructionButton;
+using MegaRaketa.SceneContext;
 using MegaRaketa.Tweens;
 using PrimeTween;
 using UnityEngine;
@@ -11,15 +13,10 @@ using Zenject;
 
 namespace MegaRaketa.Gameplay.StartScenario
 {
-    public class StartScenario : MonoBehaviour
+    public class StartScenario : ITickable, IInitializable, System.IDisposable
     {
-        [SerializeField] private GameObject _tapObject;
-        [SerializeField, Min(0f)] private float _tapObjectDestroyPeriod = 0.25f;
-        [SerializeField, Min(0f)] private float _rocketControlUnlockDelay;
-        [SerializeField, Min(0f)] private float _cameraOperatorUnlockDelay;
-        [SerializeField, Min(0f)] private float _asteroidsSpawnerUnlockDelay;
-        [SerializeField, Min(0f)] private float _selfDestructionButtonUnlockDelay;
-
+        [Inject] private StartScenarioConfig _config;
+        [Inject(Id = BindingIds.TapToStart)] private GameObject _tapObject;
         [Inject] private IRocket _rocket;
         [Inject] private IRocketControl _rocketControl;
         [Inject] private ICameraOperator _cameraOperator;
@@ -27,8 +24,21 @@ namespace MegaRaketa.Gameplay.StartScenario
         [Inject] private ISelfDestructionButton _selfDestructionButton;
 
         private bool _isLaunched;
+        private CancellationTokenSource _cancellationTokenSource;
 
-        private void Update()
+        public void Initialize()
+        {
+            _cancellationTokenSource = new CancellationTokenSource();
+        }
+
+        public void Dispose()
+        {
+            _cancellationTokenSource?.Cancel();
+            _cancellationTokenSource?.Dispose();
+            _cancellationTokenSource = null;
+        }
+
+        public void Tick()
         {
             if (_isLaunched || !IsTapStarted())
             {
@@ -70,8 +80,8 @@ namespace MegaRaketa.Gameplay.StartScenario
                 pulser.enabled = false;
             }
 
-            Tween.Scale(tapObjectTransform, Vector3.zero, _tapObjectDestroyPeriod)
-                .OnComplete(_tapObject, Destroy);
+            Tween.Scale(tapObjectTransform, Vector3.zero, _config.TapObjectDestroyPeriod)
+                .OnComplete(_tapObject, UnityEngine.Object.Destroy);
         }
 
         private async UniTask UnlockRocketControlWithDelayAsync()
@@ -81,9 +91,9 @@ namespace MegaRaketa.Gameplay.StartScenario
                 return;
             }
 
-            if (_rocketControlUnlockDelay > 0f)
+            if (_config.RocketControlUnlockDelay > 0f)
             {
-                await UniTask.WaitForSeconds(_rocketControlUnlockDelay, cancellationToken: destroyCancellationToken);
+                await UniTask.WaitForSeconds(_config.RocketControlUnlockDelay, cancellationToken: _cancellationTokenSource.Token);
             }
 
             _rocketControl.Unlock();
@@ -96,9 +106,9 @@ namespace MegaRaketa.Gameplay.StartScenario
                 return;
             }
 
-            if (_cameraOperatorUnlockDelay > 0f)
+            if (_config.CameraOperatorUnlockDelay > 0f)
             {
-                await UniTask.WaitForSeconds(_cameraOperatorUnlockDelay, cancellationToken: destroyCancellationToken);
+                await UniTask.WaitForSeconds(_config.CameraOperatorUnlockDelay, cancellationToken: _cancellationTokenSource.Token);
             }
 
             _cameraOperator.Unlock();
@@ -111,9 +121,9 @@ namespace MegaRaketa.Gameplay.StartScenario
                 return;
             }
 
-            if (_asteroidsSpawnerUnlockDelay > 0f)
+            if (_config.AsteroidsSpawnerUnlockDelay > 0f)
             {
-                await UniTask.WaitForSeconds(_asteroidsSpawnerUnlockDelay, cancellationToken: destroyCancellationToken);
+                await UniTask.WaitForSeconds(_config.AsteroidsSpawnerUnlockDelay, cancellationToken: _cancellationTokenSource.Token);
             }
 
             _asteroidsSpawner.Unlock();
@@ -126,9 +136,9 @@ namespace MegaRaketa.Gameplay.StartScenario
                 return;
             }
 
-            if (_selfDestructionButtonUnlockDelay > 0f)
+            if (_config.SelfDestructionButtonUnlockDelay > 0f)
             {
-                await UniTask.WaitForSeconds(_selfDestructionButtonUnlockDelay, cancellationToken: destroyCancellationToken);
+                await UniTask.WaitForSeconds(_config.SelfDestructionButtonUnlockDelay, cancellationToken: _cancellationTokenSource.Token);
             }
 
             _selfDestructionButton.Unlock();
