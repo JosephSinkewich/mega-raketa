@@ -35,7 +35,8 @@ namespace MegaRaketa.Marketing
         [SerializeField] private bool _tapPulseEnabled = true;
 
         [Header("Config Overrides (Play Mode only, restored on exit)")]
-        [SerializeField] private bool _screenShakeEnabled = true;
+        [SerializeField] private bool _asteroidShakeEnabled = true;
+        [SerializeField] private bool _destructionShakeEnabled = true;
         [SerializeField] private bool _gameEndWindowEnabled = true;
 
         [Header("Timing (StartScenarioConfig, before tap)")]
@@ -66,7 +67,8 @@ namespace MegaRaketa.Marketing
         public float EngineFireIntensity => _engineFireIntensity;
         public bool AsteroidTrailEnabled => _asteroidTrailEnabled;
         public bool TapPulseEnabled => _tapPulseEnabled;
-        public bool ScreenShakeEnabled => _screenShakeEnabled;
+        public bool AsteroidShakeEnabled => _asteroidShakeEnabled;
+        public bool DestructionShakeEnabled => _destructionShakeEnabled;
         public bool GameEndWindowEnabled => _gameEndWindowEnabled;
         public bool ApplyStartScenarioOverrides => _applyStartScenarioOverrides;
         public float TapObjectDestroyPeriod => _tapObjectDestroyPeriod;

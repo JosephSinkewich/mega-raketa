@@ -33,6 +33,7 @@ namespace MegaRaketa.Marketing
         private bool _hasEngineFireBaseline;
         private bool _baselineEngineFireGameObjectActive = true;
         private Vector3 _baselineShakeStrength;
+        private Vector3 _baselineDestructionShakeStrength;
         private float _baselineGameEndDelay;
         private float _baselineTapObjectDestroyPeriod;
         private float _baselineRocketControlUnlockDelay;
@@ -127,6 +128,9 @@ namespace MegaRaketa.Marketing
                 _baselineShakeStrength = MarketingSerializedConfigUtility.GetVector3(
                     _cameraShakeConfig,
                     "_strengthPerAsteroidSize");
+                _baselineDestructionShakeStrength = MarketingSerializedConfigUtility.GetVector3(
+                    _cameraShakeConfig,
+                    "_destructionStrength");
             }
 
             if (_gameEndScenarioConfig != null)
@@ -187,6 +191,10 @@ namespace MegaRaketa.Marketing
                     _cameraShakeConfig,
                     "_strengthPerAsteroidSize",
                     _baselineShakeStrength);
+                MarketingSerializedConfigUtility.SetVector3(
+                    _cameraShakeConfig,
+                    "_destructionStrength",
+                    _baselineDestructionShakeStrength);
             }
 
             if (_gameEndScenarioConfig != null)
@@ -369,11 +377,19 @@ namespace MegaRaketa.Marketing
         {
             if (_cameraShakeConfig != null && _playModeSnapshotsCaptured)
             {
-                Vector3 strength = _profile.ScreenShakeEnabled ? _baselineShakeStrength : Vector3.zero;
+                Vector3 asteroidStrength = _profile.AsteroidShakeEnabled ? _baselineShakeStrength : Vector3.zero;
                 MarketingSerializedConfigUtility.SetVector3(
                     _cameraShakeConfig,
                     "_strengthPerAsteroidSize",
-                    strength);
+                    asteroidStrength);
+
+                Vector3 destructionStrength = _profile.DestructionShakeEnabled
+                    ? _baselineDestructionShakeStrength
+                    : Vector3.zero;
+                MarketingSerializedConfigUtility.SetVector3(
+                    _cameraShakeConfig,
+                    "_destructionStrength",
+                    destructionStrength);
             }
 
             if (_gameEndScenarioConfig != null && _playModeSnapshotsCaptured)
