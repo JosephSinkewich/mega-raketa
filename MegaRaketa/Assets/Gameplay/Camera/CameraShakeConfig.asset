@@ -16,3 +16,7 @@ MonoBehaviour:
   _strengthPerAsteroidSize: {x: 0.15, y: 0.15, z: 0}
   _vibrato: 10
   _randomness: 90
+  _destructionDuration: 0.6
+  _destructionStrength: {x: 0.5, y: 0.5, z: 0.1}
+  _destructionVibrato: 20
+  _destructionRandomness: 90

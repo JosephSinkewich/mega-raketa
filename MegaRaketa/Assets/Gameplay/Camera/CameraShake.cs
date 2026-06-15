@@ -16,7 +16,8 @@ namespace MegaRaketa.Gameplay.Camera
 
         public void Initialize()
         {
-            _rocket.OnAsteroidCollide += Shake;
+            _rocket.OnAsteroidCollide += ShakeOnAsteroidCollide;
+            _rocket.OnExplode += ShakeOnDestruction;
         }
 
         public void Dispose()
@@ -29,23 +30,39 @@ namespace MegaRaketa.Gameplay.Camera
             }
 
             _activeTweens.Clear();
-            _rocket.OnAsteroidCollide -= Shake;
+            _rocket.OnAsteroidCollide -= ShakeOnAsteroidCollide;
+            _rocket.OnExplode -= ShakeOnDestruction;
         }
 
-        private void Shake(RocketAsteroidCollisionEventData eventData)
+        private void ShakeOnAsteroidCollide(RocketAsteroidCollisionEventData eventData)
         {
             Vector3 strength = _config.StrengthPerAsteroidSize * eventData.AsteroidSize;
 
-            Tween tween = CreateShakeTween(strength)
+            Tween tween = CreateShakeTween(
+                    strength,
+                    _config.Duration,
+                    _config.Vibrato,
+                    _config.Randomness)
                 .SetUpdate(UpdateType.Late);
             _activeTweens.Add(tween);
         }
 
-        private Tween CreateShakeTween(Vector3 strength)
+        private void ShakeOnDestruction()
+        {
+            Tween tween = CreateShakeTween(
+                    _config.DestructionStrength,
+                    _config.DestructionDuration,
+                    _config.DestructionVibrato,
+                    _config.DestructionRandomness)
+                .SetUpdate(UpdateType.Late);
+            _activeTweens.Add(tween);
+        }
+
+        private Tween CreateShakeTween(Vector3 strength, float duration, int vibrato, float randomness)
         {
             Sequence sequence = DOTween.Sequence();
-            int steps = _config.Vibrato;
-            float stepDuration = _config.Duration / steps;
+            int steps = vibrato;
+            float stepDuration = duration / steps;
             Vector3 offset = Vector3.zero;
             bool isDisposed = false;
 
@@ -54,7 +71,7 @@ namespace MegaRaketa.Gameplay.Camera
                 sequence.Append(DOTween.To(
                     () => offset,
                     SetOffset,
-                    GetRandomOffset(strength),
+                    GetRandomOffset(strength, randomness),
                     stepDuration));
             }
 
@@ -92,9 +109,9 @@ namespace MegaRaketa.Gameplay.Camera
             }
         }
 
-        private Vector3 GetRandomOffset(Vector3 strength)
+        private Vector3 GetRandomOffset(Vector3 strength, float randomness)
         {
-            float angle = Random.Range(-_config.Randomness, _config.Randomness) * Mathf.Deg2Rad;
+            float angle = Random.Range(-randomness, randomness) * Mathf.Deg2Rad;
             float radius = Random.Range(0.4f, 1f);
             Vector2 randomOffset = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * radius;
 

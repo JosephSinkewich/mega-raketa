@@ -10,9 +10,19 @@ namespace MegaRaketa.Gameplay.Camera
         [SerializeField, Min(1)] private int _vibrato = 10;
         [SerializeField, Range(0f, 180f)] private float _randomness = 90f;
 
+        [SerializeField, Min(0f)] private float _destructionDuration = 0.6f;
+        [SerializeField] private Vector3 _destructionStrength = new Vector3(0.5f, 0.5f, 0.1f);
+        [SerializeField, Min(1)] private int _destructionVibrato = 20;
+        [SerializeField, Range(0f, 180f)] private float _destructionRandomness = 90f;
+
         public float Duration => _duration;
         public Vector3 StrengthPerAsteroidSize => _strengthPerAsteroidSize;
         public int Vibrato => _vibrato;
         public float Randomness => _randomness;
+
+        public float DestructionDuration => _destructionDuration;
+        public Vector3 DestructionStrength => _destructionStrength;
+        public int DestructionVibrato => _destructionVibrato;
+        public float DestructionRandomness => _destructionRandomness;
     }
 }
