@@ -7,7 +7,6 @@ namespace MegaRaketa.Gameplay.UIElements.CongratulationsWindow
 {
     public class CongratulationsWindow : MonoBehaviour
     {
-        [SerializeField] private TMP_Text _titleText;
         [SerializeField] private TMP_Text _scoreText;
         [SerializeField] private Button _restartButton;
         [SerializeField] private string _scoreFormat = "Score: {0}";
@@ -27,7 +26,6 @@ namespace MegaRaketa.Gameplay.UIElements.CongratulationsWindow
 
         public void Initialize(int score)
         {
-            _titleText.text = "Congratulations!";
             _scoreText.text = string.Format(_scoreFormat, score);
         }
 
