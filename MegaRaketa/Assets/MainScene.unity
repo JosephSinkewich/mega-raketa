@@ -229,7 +229,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -3885271
-  m_SortingLayer: 1
+  m_SortingLayer: 2
   m_SortingOrder: 2
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 0.41509432, g: 0.41509432, b: 0.41509432, a: 1}
@@ -787,10 +787,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fd4abe093dfb944095aa789e2f663d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _targetViewportY: 0
+  _targetViewportY: 0.3
   _viewportXRange: {x: 0.1, y: 0.9}
   _angleRange: {x: 45, y: -45}
   _smoothTime: 0.2
+  _minOrthographicSize: 5
+  _maxOrthographicSize: 10
+  _targetAsteroidCount: 10
+  _zoomSmoothTime: 0.5
 --- !u!114 &846774188
 MonoBehaviour:
   m_ObjectHideFlags: 0
