@@ -3,6 +3,7 @@ using MegaRaketa.Gameplay.Asteroids;
 using MegaRaketa.Gameplay.CameraOperator;
 using MegaRaketa.Gameplay.Rocket;
 using MegaRaketa.Gameplay.Rocket.RocketControl;
+using MegaRaketa.Gameplay.SelfDestructionButton;
 using MegaRaketa.Tweens;
 using PrimeTween;
 using UnityEngine;
@@ -17,11 +18,13 @@ namespace MegaRaketa.Gameplay.StartScenario
         [SerializeField, Min(0f)] private float _rocketControlUnlockDelay;
         [SerializeField, Min(0f)] private float _cameraOperatorUnlockDelay;
         [SerializeField, Min(0f)] private float _asteroidsSpawnerUnlockDelay;
+        [SerializeField, Min(0f)] private float _selfDestructionButtonUnlockDelay;
 
         [Inject] private IRocket _rocket;
         [Inject] private IRocketControl _rocketControl;
         [Inject] private ICameraOperator _cameraOperator;
         [Inject] private IAsteroidsSpawner _asteroidsSpawner;
+        [Inject] private ISelfDestructionButton _selfDestructionButton;
 
         private bool _isLaunched;
 
@@ -38,6 +41,7 @@ namespace MegaRaketa.Gameplay.StartScenario
             UnlockRocketControlWithDelayAsync().Forget();
             UnlockCameraOperatorWithDelayAsync().Forget();
             UnlockAsteroidsSpawnerWithDelayAsync().Forget();
+            UnlockSelfDestructionButtonWithDelayAsync().Forget();
         }
 
         private bool IsTapStarted()
@@ -113,6 +117,21 @@ namespace MegaRaketa.Gameplay.StartScenario
             }
 
             _asteroidsSpawner.Unlock();
+        }
+
+        private async UniTask UnlockSelfDestructionButtonWithDelayAsync()
+        {
+            if (_selfDestructionButton == null)
+            {
+                return;
+            }
+
+            if (_selfDestructionButtonUnlockDelay > 0f)
+            {
+                await UniTask.WaitForSeconds(_selfDestructionButtonUnlockDelay, cancellationToken: destroyCancellationToken);
+            }
+
+            _selfDestructionButton.Unlock();
         }
     }
 }

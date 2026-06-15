@@ -18,6 +18,7 @@ namespace MegaRaketa.Gameplay.CameraOperator
         [SerializeField, Min(0f)] private float _maxOrthographicSize = 10f;
         [SerializeField, Min(0)] private int _targetAsteroidCount = 5;
         [SerializeField, Min(0f)] private float _zoomSmoothTime = 0.5f;
+        [SerializeField, Min(0f)] private float _explosionOrthographicSize = 3f;
 
         [Inject] private IRocket _rocket;
         [Inject] private ISceneVisualObjects _sceneVisualObjects;
@@ -29,6 +30,8 @@ namespace MegaRaketa.Gameplay.CameraOperator
         private float _orthographicSize;
         private float _zoomVelocity;
         private bool _isLocked = true;
+        private bool _isExplosionFocus;
+        private Vector3 _explosionFocusPosition;
 
         private void Awake()
         {
@@ -36,6 +39,19 @@ namespace MegaRaketa.Gameplay.CameraOperator
             _followPosition = transform.position;
             _orthographicSize = _minOrthographicSize;
             _camera.orthographicSize = _orthographicSize;
+        }
+
+        private void Start()
+        {
+            _rocket.OnExplode += HandleRocketExplode;
+        }
+
+        private void OnDestroy()
+        {
+            if (_rocket != null)
+            {
+                _rocket.OnExplode -= HandleRocketExplode;
+            }
         }
 
         private void LateUpdate()
@@ -68,6 +84,15 @@ namespace MegaRaketa.Gameplay.CameraOperator
             _followPosition = transform.position - GetTotalOffset();
         }
 
+        public void FocusOnExplosion(Vector3 position, float orthographicSize)
+        {
+            _isExplosionFocus = true;
+            _explosionFocusPosition = position;
+            _explosionOrthographicSize = orthographicSize;
+            _isLocked = false;
+            _followPosition = transform.position - GetTotalOffset();
+        }
+
         public void SetOffset(object key, Vector3 offset)
         {
             if (key == null)
@@ -90,9 +115,10 @@ namespace MegaRaketa.Gameplay.CameraOperator
 
         private Vector3 GetDesiredPosition()
         {
-            Vector3 rocketPosition = _rocket.Position;
+            Vector3 rocketPosition = _isExplosionFocus ? _explosionFocusPosition : _rocket.Position;
             float rocketDepth = Vector3.Dot(rocketPosition - _followPosition, transform.forward);
-            Vector3 viewportPoint = new Vector3(GetTargetViewportX(), _targetViewportY, rocketDepth);
+            float targetViewportX = _isExplosionFocus ? 0.5f : GetTargetViewportX();
+            Vector3 viewportPoint = new Vector3(targetViewportX, _targetViewportY, rocketDepth);
             Vector3 currentWorldPoint = _camera.ViewportToWorldPoint(viewportPoint);
             currentWorldPoint += _followPosition - transform.position;
 
@@ -121,8 +147,9 @@ namespace MegaRaketa.Gameplay.CameraOperator
 
         private void UpdateZoom()
         {
-            int visibleAsteroidCount = CountVisibleAsteroids();
-            float desiredOrthographicSize = GetDesiredOrthographicSize(visibleAsteroidCount);
+            float desiredOrthographicSize = _isExplosionFocus
+                ? _explosionOrthographicSize
+                : GetDesiredOrthographicSize(CountVisibleAsteroids());
 
             if (_zoomSmoothTime <= 0f)
             {
@@ -138,6 +165,12 @@ namespace MegaRaketa.Gameplay.CameraOperator
             }
 
             _camera.orthographicSize = _orthographicSize;
+        }
+
+        private void HandleRocketExplode()
+        {
+            Vector3 explosionPosition = _rocket.Position;
+            FocusOnExplosion(explosionPosition, _explosionOrthographicSize);
         }
 
         private float GetDesiredOrthographicSize(int visibleAsteroidCount)

@@ -2,6 +2,7 @@ using System;
 using MegaRaketa.Gameplay.Asteroids;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using Zenject;
 
 namespace MegaRaketa.Gameplay.Rocket
 {
@@ -13,14 +14,19 @@ namespace MegaRaketa.Gameplay.Rocket
         [SerializeField, Min(0f)] private float _rotationSpeed;
         [SerializeField, Min(0f)] private float _maxDeviationAngle;
         [SerializeField] private ParticleSystem _engineFire;
+        [SerializeField] private GameObject _explosionEffect;
+
+        [Inject] private IInstantiator _instantiator;
 
         private float _speed;
         private float _deviationAngle;
         private bool _isLaunched;
+        private bool _isExploded;
         private Collider2D _rocketCollider;
         private Quaternion _startRotation;
 
         public event Action<RocketAsteroidCollisionEventData> OnAsteroidCollide;
+        public event Action OnExplode;
 
         public Vector3 Position => transform.position;
         public float DeviationAngle => _deviationAngle;
@@ -52,6 +58,33 @@ namespace MegaRaketa.Gameplay.Rocket
             _isLaunched = true;
             _engineFire.Play();
             AccelerateAsync().Forget();
+        }
+
+        public void Explode()
+        {
+            if (_isExploded)
+            {
+                return;
+            }
+
+            _isExploded = true;
+            OnExplode?.Invoke();
+            SpawnExplosionEffect();
+            Destroy(gameObject);
+        }
+
+        private void SpawnExplosionEffect()
+        {
+            if (_explosionEffect == null)
+            {
+                return;
+            }
+
+            _instantiator.InstantiatePrefab(
+                _explosionEffect,
+                transform.position,
+                transform.rotation,
+                transform.parent);
         }
 
         public void RotateTo(Vector3 targetPoint)

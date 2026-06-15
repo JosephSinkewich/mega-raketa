@@ -9,6 +9,19 @@ namespace MegaRaketa.Gameplay.Rocket.RocketControl
 
         private bool _isLocked = true;
 
+        private void Start()
+        {
+            _rocket.OnExplode += HandleRocketExplode;
+        }
+
+        private void OnDestroy()
+        {
+            if (_rocket != null)
+            {
+                _rocket.OnExplode -= HandleRocketExplode;
+            }
+        }
+
         private void Update()
         {
             if (_isLocked || !TryGetPointerWorldPoint(out Vector3 targetPoint))
@@ -22,6 +35,11 @@ namespace MegaRaketa.Gameplay.Rocket.RocketControl
         public void Unlock()
         {
             _isLocked = false;
+        }
+
+        private void HandleRocketExplode()
+        {
+            _isLocked = true;
         }
 
         private bool TryGetPointerWorldPoint(out Vector3 targetPoint)

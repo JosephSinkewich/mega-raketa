@@ -24,6 +24,19 @@ namespace MegaRaketa.Gameplay.Asteroids
         private AsteroidsSpawnSection _activeSection;
         private bool _isLocked = true;
 
+        private void Start()
+        {
+            _rocket.OnExplode += HandleRocketExplode;
+        }
+
+        private void OnDestroy()
+        {
+            if (_rocket != null)
+            {
+                _rocket.OnExplode -= HandleRocketExplode;
+            }
+        }
+
         private void Update()
         {
             if (_isLocked || _asteroidPrefab == null || _activeSection == null)
@@ -56,6 +69,11 @@ namespace MegaRaketa.Gameplay.Asteroids
             _isStartScenarioCompleted = false;
             InitializeSection();
             ScheduleNextSpawn();
+        }
+
+        private void HandleRocketExplode()
+        {
+            _isLocked = true;
         }
 
         private void InitializeSection()

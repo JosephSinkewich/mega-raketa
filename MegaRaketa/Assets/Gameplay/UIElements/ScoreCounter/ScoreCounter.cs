@@ -6,7 +6,7 @@ using Zenject;
 namespace MegaRaketa.Gameplay.ScoreCounter
 {
     [RequireComponent(typeof(TMP_Text))]
-    public class ScoreCounter : MonoBehaviour
+    public class ScoreCounter : MonoBehaviour, IScoreCounter
     {
         [SerializeField] private string _textFormat = "Score: {0}";
 
@@ -14,6 +14,8 @@ namespace MegaRaketa.Gameplay.ScoreCounter
 
         private TMP_Text _text;
         private int _score;
+
+        public int Score => _score;
 
         private void Awake()
         {
